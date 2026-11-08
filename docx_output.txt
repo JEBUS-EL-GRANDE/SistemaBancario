@@ -1,0 +1,263 @@
+UNIVERSIDAD AUTÓNOMA “GABRIEL RENÉ MORENO”
+FACULTAD INTEGRAL DEL CHACO
+CARRERA DE INGENIERÍA EN INFORMATICA Y SISTEMAS
+“Sistema Bancario Modular de Alta Seguridad”
+ELABORADO POR: BENJAMIN YUCRA AUCA 
+CARLOS DANIEL UGARTE ÁVALOS 
+JUAN ERNESTO CORDERO POZO
+DOCENTE: MSC. ING. LIGERON ROLANDO
+MATRIA: INGENIERIA DE SOFTWARE 1
+SEMESTRE: OCTAVO
+ 
+Camiri - Santa Cruz – Bolivia
+24 de agosto del 2026
+ESPECIFICACIÓN DE REQUISITOS DE SOFTWARE (ERS)
+SISTEMA BANCARIO
+1. INTRODUCCIÓN
+1.1 Propósito
+El propósito del presente documento es definir de manera clara, precisa y formal los requisitos funcionales y no funcionales del Sistema Bancario, una plataforma de software orientada a la gestión y automatización de las operaciones financieras fundamentales de una entidad bancaria.
+El sistema permitirá la administración integral de clientes, usuarios, cuentas y transacciones, estructurándose a través de los siguientes módulos y componentes operativos:
+Módulo de Depósitos: Registro y procesamiento de ingresos en efectivo, cheques o transferencias.
+Módulo de Retiros: Validación y ejecución segura de retiros de efectivo mediante ventanilla o cajeros automáticos (ATM).
+Módulo de Préstamos: Solicitud, evaluación, aprobación, desembolso y seguimiento del cronograma de pagos.
+Gestión de Clientes: Registro, actualización y mantenimiento del expediente de clientes.
+Gestión de Cuentas: Apertura, parametrización y administración de cuentas corrientes y de ahorro.
+Consulta de Movimientos y Saldos: Visualización e historial detallado de transacciones financieras en tiempo real.
+Generación de Reportes: Emisión de estados de cuenta, auditorías y consolidado de operaciones.
+Control de Usuarios y Permisos (RBAC): Gestión de autenticación, roles y niveles de acceso al sistema.
+1.2 Convenciones del documento
+Los requisitos funcionales serán identificados mediante códigos con el siguiente formato:
+RF-001: Requisito Funcional.
+Ejemplo:
+RF-001: El sistema deberá permitir registrar nuevos clientes.
+Los requisitos no funcionales serán identificados mediante:
+RNF-001: Requisito No Funcional.
+Ejemplo:
+RNF-001: El sistema deberá proteger las contraseñas de los usuarios mediante 
+1.3 Audiencia objetivo y sugerencias de lectura
+Este documento está dirigido a:
+Analistas de Sistemas: Para validar la cobertura completa del negocio y servir de base en la trazabilidad de requerimientos.
+Arquitectos y Diseñadores de Bases de Datos: Para estructurar el modelo entidad-relación y definir los esquemas de persistencia de datos.
+Desarrolladores de Software: Para implementar las reglas de negocio, lógica transaccional e interfaces de usuario.
+Equipo de QA / Testers: Para elaborar los casos de prueba funcionales, de seguridad y de estrés.
+Administradores del Sistema Bancario: Para comprender los alcances de configuración, seguridad y control de acceso.
+1.4 Alcance del proyecto
+El Sistema Bancario operará como una solución centralizada para controlar, registrar y auditar las operaciones financieras de los clientes.
+Inclusiones (Dentro del alcance):
+Gestión de Identidad y Acceso:
+Registrar, modificar, activar y desactivar usuarios del sistema.
+Asignar roles y controlar accesos mediante permisos detallados.
+Administración de Clientes y Cuentas:
+Registrar expedientes completos de clientes.
+Crear, asociar y administrar cuentas de ahorro y cuentas corrientes.
+Operaciones Financieras en Tiempo Real:
+Registrar depósitos en efectivo, cheques y cuentas de terceros con verificación de titular.
+Registrar retiros previa validación de fondos, límites diarios y autenticación de seguridad.
+Gestión de Préstamos:
+Recepción de solicitudes de préstamos personales e hipotecarios.
+Evaluación de capacidad de pago e historial crediticio.
+Aprobación, rechazo, desembolso automático y aplicación de cronogramas de pago.
+Control de amortizaciones, cobro de cuotas y recepción de pagos anticipados.
+Consultas, Historiales y Auditoría:
+Consulta en tiempo real de saldos, estados de cuenta y detalle de movimientos.
+Auditoría e historial inmutable de transacciones registradas por usuario/cajero.
+Generación e impresión de comprobantes y reportes consolidados.
+Exclusiones (Fuera del alcance en la versión actual):
+Integración con redes internacionales de procesamiento de tarjetas de crédito/débito físicas externas (ej. Visa/Mastercard Global).
+Operaciones con moneda extranjera o mercado de divisas (Forex).
+Módulos de inversiones en bolsa o productos financieros derivados.
+1.5 Referencias:
+Para la estructuración del presente documento se tomaron como referencia los siguientes estándares e instrumentos normativos:
+IEEE Std 830-1998: IEEE Recommended Practice for Software Requirements Specifications.
+Estándar ISO/IEC/IEEE 29148:2018: Systems and software engineering — Life cycle processes — Requirements engineering.
+Manual de Arquitectura Técnica y Guía Operativa Interna: Documentación de referencia para sistemas transaccionales bancarios.
+1.6 Definiciones, Acrónimos y Abreviaturas
+ERS / SRS: Especificación de Requisitos de Software (Software Requirements Specification).
+ATM: Cajero Automático (Automated Teller Machine).
+NIP / PIN: Número de Identificación Personal.
+2FA: Autenticación de Doble Factor (Two-Factor Authentication).
+RBAC: Control de Acceso Basado en Roles (Role-Based Access Control).
+Transacción ACID: Propiedades de consistencia en bases de datos (Atomicidad, Consistencia, Aislamiento y Durabilidad).
+2. DESCRIPCIÓN GENERAL
+2.1 Perspectiva del producto
+El Sistema Bancario es una solución de software independiente, centralizada y modular, diseñada para gestionar la totalidad de las transacciones financieras y administrativas de la entidad bancaria.
+El producto adopta una arquitectura de software multicapa que garantiza la separación de responsabilidades, mantenibilidad y seguridad de la información:
+Usuario → Aplicación → Servidor → Base de datos
+Capa de Presentación (Frontend): Interfaz gráfica intuitiva desarrollada para ejecutarse en navegadores web modernos dentro de las estaciones de trabajo de los empleados y cajeros.
+Capa de Lógica de Negocio (Backend): Servidor encargado de procesar la lógica bancaria, validar las reglas de negocio, gestionar las autenticaciones y aplicar los algoritmos financieros (ej. amortización).
+Capa de Datos (Persistencia): Sistema Gestor de Bases de Datos Relacional (RDBMS) que garantiza la persistencia, integridad y consistencia de toda la información operativa.
+2.2 Características del producto
+Las principales características del sistema serán:
+Gestión de usuarios: Permitirá registrar, modificar, consultar y desactivar usuarios del sistema.
+Gestión de clientes: Permitirá almacenar la información personal y bancaria de los clientes.
+Gestión de cuentas: Permitirá crear y administrar cuentas bancarias asociadas a los clientes.
+Módulo de depósitos: Permitirá registrar depósitos realizados por los clientes y actualizar el saldo de la cuenta
+Módulo de retiros: Permitirá registrar retiros verificando previamente que la cuenta tenga saldo suficiente.
+Módulo de préstamos: Permitirá gestionar solicitudes, aprobación, desembolso y pago de préstamos.
+Consulta de información: Permitirá consultar saldos, movimientos, préstamos y estados de cuenta.
+Reportes: Permitirá generar reportes de los depósitos, retiros, préstamos, clientes y movimientos.
+2.3 Clases y características de los usuarios
+Administrador
+El administrador tendrá acceso a las principales funciones del sistema:
+Crear usuarios, Modificar usuarios, Desactivar usuarios, Asignar roles, Consultar información de clientes, Consultar cuentas, Consultar transacciones,Generar reportes.
+Cajero
+El cajero será responsable de realizar operaciones bancarias:
+Registrar depósitos, Registrar retiros, Consultar cuentas, Consultar saldos, Consultar movimientos, Registrar pagos de préstamos.
+Cliente
+El cliente podrá consultar su información bancaria:
+Consultar saldo, Consultar movimientos, Consultar préstamos, Consultar cuotas, Consultar información personal.
+2.4 Ambiente de operación
+El sistema podrá ejecutarse en una infraestructura compuesta por:
+Hardware
+Computadoras de escritorio o portátiles, Servidor de base de datos, Dispositivos de red.
+Software
+Sistema operativo Linux o Windows Server, Servidor web, Sistema gestor de bases de datos, Navegador web moderno.
+Base de datos
+El sistema utilizará una base de datos relacional para almacenar:
+Clientes, Usuarios, Cuentas, Depósitos,Retiros,Préstamos,Pagos,Movimientos.
+2.5 Restricciones de diseño e implementación
+El desarrollo del sistema estará sujeto a las siguientes restricciones obligatorias:
+Restricciones Transaccionales (Propiedades ACID):
+Toda operación financiera (depósito, retiro, pago) debe ser procesada de forma atómica: una transacción no debe modificar información de manera parcial en caso de fallo.
+Queda estrictamente prohibido permitir retiros por montos superiores al saldo disponible en la cuenta.
+Cada transacción debe generar un identificador de referencia único e irrepetible.
+Restricciones de Seguridad:
+Las contraseñas de los usuarios bajo ninguna circunstancia se almacenarán en texto plano. Se deberán utilizar algoritmos de hashing robustos (ej. BCrypt, Argon2).
+La comunicación entre cliente y servidor debe realizarse obligatoriamente mediante canales cifrados utilizando el protocolo HTTPS/TLS.
+El acceso a cada menú y función estará restringido estrictamente según el rol asignado al usuario (RBAC).
+Restricciones de Auditoría y Persistencia:
+Todas las operaciones financieras y cambios de datos sensibles deben ser registrados en una bitácora de auditoría inmutable indicando fecha, hora, usuario y tipo de operación.
+No se permite la eliminación física de registros de transacciones financieras en la base de datos.
+2.6 Documentación para el usuario
+Para facilitar la adopción del sistema y garantizar una correcta operación, se proporcionarán los siguientes entregables de documentación escritos en lenguaje claro y estructurado:
+Manual de Usuario por Rol: Guías paso a paso para Administradores, Cajeros y Ejecutivos de Crédito.
+Guía Operativa de Ventanilla: Procedimientos para el registro acelerado de depósitos, retiros y cuadres de caja.
+Manual de Inicio de Sesión y Autenticación: Instrucciones para recuperación de credenciales y buenas prácticas de seguridad.
+Manual de Administración y Despliegue Técnico: Documentación de configuración de servidor, base de datos y políticas de respaldo (backups).
+2.7 Suposiciones y dependencias: Se considera que:
+Los usuarios tendrán credenciales válidas.
+Existirá conexión con el servidor.
+La base de datos estará disponible.
+Los clientes proporcionarán información correcta.
+El personal estará capacitado para utilizar el sistema.
+2.8 Necesidades Futuras y Escalabilidad (Sección Nueva Añadida)
+El diseño modular del sistema debe prever las siguientes expansiones en fases posteriores:
+Integración Biométrica: Incorporación de dispositivos escáner de huellas dactilares mediante estándar WebAuthn/FIDO2 para autenticación de retiros en ventanilla.
+Banca Móvil: Desarrollo de aplicaciones nativas para dispositivos iOS/Android expuestas a través de las API REST del sistema.
+Módulo de Transferencias Interbancarias: Conexión con cámaras de compensación para transferencias a otros bancos.
+3. CARACTERÍSTICAS DEL SISTEMA
+3.1 Módulo de Gestión de Usuarios y Permisos
+RF-001 - Registro y Edición de Usuarios:
+El sistema debe permitir al Administrador registrar nuevos usuarios internos (cajeros, ejecutivos, administradores), capturando nombre completo, correo electrónico, nombre de usuario y rol asignado.
+RF-002 - Asignación de Roles y Permisos (RBAC):
+El sistema debe restringir el acceso a las vistas y funciones según el rol del usuario asignado (Administrador, Cajero, Ejecutivo de Crédito, Cliente).
+RF-003 - Gestión de Estado de Usuarios:
+El sistema debe permitir al Administrador activar, inactivar o bloquear usuarios sin eliminar su historial de actividades en la base de datos.
+3.2 Módulo de Gestión de Clientes y Cuentas
+RF-004 - Registro e Expediente de Clientes:
+El sistema debe permitir el registro completo de clientes capturando nombres, apellidos, tipo y número de documento de identidad (DNI/Pasaporte), correo electrónico, teléfono y dirección.
+RF-005 - Validación de Documentos Únicos:
+El sistema debe validar que no existan dos clientes registrados con el mismo número de documento de identidad o correo electrónico.
+RF-006 - Apertura y Parametrización de Cuentas Bancarias:
+El sistema debe permitir la creación de cuentas asociadas a un cliente, definiendo el tipo de cuenta (Ahorro o Corriente), moneda y asignando automáticamente un número de cuenta único.
+RF-007 - Asignación de Tarjetas de Débito:
+El sistema debe permitir la emisión y vinculación de tarjetas de débito asociadas a la cuenta con la estructura del código BIN institucional (ej. 453288) y cifrado seguro de NIP/PIN.
+RF-008 - Control del Estado de la Cuenta:
+El sistema debe permitir cambiar el estado de una cuenta (Activa, Bloqueada, Inactiva, Cancelada) y restringir transacciones en cuentas bloqueadas o canceladas.
+3.3 Módulo de Depósitos
+RF-009 - Depósitos en Efectivo: El sistema debe permitir el registro de depósitos en efectivo en ventanilla o cajero automático (ATM), identificando el número de cuenta destino y el monto ingresado. 
+RF-010 - Depósitos con Cheques y Verificación: El sistema debe permitir registrar depósitos en cheque, registrando banco emisor, número de cheque y estableciendo un estado de "Fondos en Reserva" hasta su verificación y liberación. 
+RF-011 - Actualización de Saldo en Tiempo Real: El sistema debe actualizar el saldo disponible de la cuenta de destino inmediatamente después de confirmarse la transacción de depósito. 
+RF-012 - Depósitos a Cuentas de Terceros: El sistema debe mostrar el nombre del titular de la cuenta de destino antes de confirmar un depósito a terceros para evitar errores en el abono. 
+RF-013 - Emisión de Comprobante de Depósito: El sistema debe generar e imprimir/enviar un comprobante digital con la fecha, hora, número de referencia único, cuenta destino y monto depositado. 
+3.4 Módulo de Retiros
+RF-014 - Retiro en Ventanilla e Identificación: El sistema debe permitir al Cajero procesar retiros en ventanilla previa validación de la identidad oficial del cliente y consulta de saldo disponible. 
+RF-015 - Retiro en ATM con Tarjeta y NIP: El sistema debe permitir procesar retiros mediante terminales o emuladores ATM validando número de tarjeta, vigencia y NIP/PIN cifrado. 
+RF-016 - Autenticación Reforzada (2FA / Biometría): El sistema debe permitir la autenticación de retiros de alta seguridad mediante validación biométrica de huella dactilar (WebAuthn API) o código de seguridad temporal. 
+RF-017 - Validación de Saldo Insuficiente: El sistema debe rechazar automáticamente cualquier intento de retiro donde el monto solicitado sea superior al saldo disponible en la cuenta. 
+RF-018 - Control de Límite Diario de Retiro: El sistema debe verificar y aplicar límites de retiro acumulado diario por cliente configurados previamente por la institución. 
+RF-019 - Notificaciones de Seguridad: El sistema debe enviar notificaciones automáticas (vía correo electrónico o SMS) al cliente ante retiros que superen un monto umbral configurable. 
+3.5 Módulo de Préstamos y Amortizaciones
+RF-020 - Solicitud de Préstamo: El sistema debe permitir registrar solicitudes de préstamos (Personales, Hipotecarios, Comerciales) especificando el cliente, monto solicitado, plazo en meses y destino del crédito. 
+RF-021 - Evaluación Crediticia y Capacidad de Pago: El sistema debe calcular automáticamente la capacidad de endeudamiento e historial crediticio del cliente en función de sus ingresos, egresos y antecedentes de pago. 
+RF-022 - Aprobación / Rechazo de Préstamos: El sistema debe permitir al Ejecutivo de Crédito cambiar el estado de la solicitud a "Aprobado" o "Rechazado", registrando el motivo correspondiente. 
+RF-023 - Generación de Tablas de Amortización: El sistema debe generar automáticamente el calendario de pagos bajo el método financiero de amortización francesa (cuota fija, desglose de capital e intereses) según la tasa vigente. 
+RF-024 - Desembolso de Préstamo: El sistema debe abonar el monto total del préstamo aprobado directamente a la cuenta bancaria del cliente al momento de la firma y activación. 
+RF-025 - Registro de Pagos y Pagos Anticipados: El sistema debe procesar el cobro de cuotas mensuales y permitir amortizaciones extraordinarias o cancelaciones anticipadas recalculando los intereses futuros. 
+3.6 Módulo de Consultas, Movimientos y Reportes
+RF-026 - Consulta de Saldos y Extractos: El sistema debe permitir a los clientes y cajeros consultar el saldo actual, saldo contable y un extracto detallado de los últimos movimientos de la cuenta. 
+RF-027 - Historial e Identificador Único de Movimientos: El sistema debe mantener un registro inmutable de cada transacción procesada con un código de referencia único, fecha, hora, tipo de movimiento y canal utilizado. 
+RF-028 - Reportes Consolidados de Operaciones: El sistema debe permitir al Administrador y Cajeros generar reportes filtrados por rango de fechas, canal (Ventanilla/ATM), tipo de operación y cajero responsable. 
+RF-029 - Generación de Reportes de Cartera de Préstamos: El sistema debe emitir informes sobre préstamos activos, créditos al día, morosos y cuotas cobradas en el período seleccionable. 
+RF-030 - Exportación de Informes: El sistema debe permitir la exportación de los reportes en formatos estándar como PDF e Hojas de Cálculo (CSV/Excel). 
+4. REQUISITOS DE LA INTERFAZ EXTERNA
+La interfaz gráfica de usuario estará diseñada bajo el paradigma de Single Page Application (SPA) reactiva, garantizando navegabilidad ágil, tiempos de respuesta inmediatos y soporte para modo oscuro/claro. 
+La estructura de navegación se organizará mediante las siguientes interfaces principales:
+Pantalla de Autenticación / Inicio de Sesión:
+Formulario de ingreso de credenciales con validación de rol.
+Módulo de autenticación biométrica de 2º Factor (WebAuthn). 
+Panel Principal (Dashboard General):
+Vista adaptada al rol del usuario logueado con métricas clave y accesos directos.
+Módulo de Gestión de Clientes y Cuentas:
+Formulario de enrolamiento de clientes, consulta de expedientes y creación de cuentas. 
+Modal para enrolamiento biométrico de huellas dactilares. 
+Módulo de Operaciones de Ventanilla (Depósitos / Retiros):
+Búsqueda ágil de cuentas por número, documento, tarjeta o lectura biométrica. 
+Formulario de captura de montos, validación de saldos en vivo y pre-visualización de titulares. 
+Modal interactivo para el emulador de lector de tarjetas (POS/ATM) con soporte de lectura por chip o contactless. 
+Módulo de Préstamos y Créditos:
+Calculadora interactiva de cuotas (Simulador de Amortización Francesa). 
+Formulario de evaluación crediticia, aprobación de créditos y consulta de calendarios de pago. 
+Módulo de Consultas y Reportes:
+Tablas dinámicas con filtros por fecha, tipo de movimiento, canal y cajero responsable. 
+Botones de descarga directa de extractos bancarios e informes en formatos PDF y CSV. 
+4.2 Interfaces del hardware
+A. Estaciones de Trabajo (Ventanillas y Oficinas)
+Procesador: Doble núcleo a 2.0 GHz o superior. 
+Memoria RAM: Mínimo 4 GB (se recomiendan 8 GB). 
+Periféricos Específicos:
+Lector biométrico de huellas USB con soporte para estándar FIDO2 / WebAuthn. 
+Emulador / Lector de tarjetas de débito/crédito con lector de chip/banda. 
+Impresora de recibos/tickets de ventanilla para comprobantes. 
+B. Servidor de Aplicaciones y Base de Datos
+Procesador: Quad-Core a 2.5 GHz o superior.
+Memoria RAM: Mínimo 16 GB.
+Almacenamiento: Disco SSD/NVMe con espacio disponible para logs y respaldos continuos. 
+4.3 Interfaces del software: El sistema deberá comunicarse con:
+El sistema establecerá comunicación con los siguientes componentes del entorno tecnológico:
+Sistema Gestor de Base de Datos (SGBD): Conexión vía controladores nativos con MySQL/MariaDB o SQLite garantizando motor de almacenamiento InnoDB para integridad de transacciones. 
+Servidor Web / API REST: Nginx o Apache procesando peticiones HTTP/2 y ejecutando lógica PHP 8.x / Laravel 12. 
+Servicio de Notificaciones Externa: Integración con API de correo SMTP y gateways de mensajería SMS para avisos transaccionales. 
+4.4 Interfaces de las comunicaciones
+Cifrado de Capa de Transporte: Toda la comunicación entre cliente y servidor se realizará estrictamente mediante protocolo seguro HTTPS (TLS 1.3). 
+Intercambio de Datos: Formato JSON estandarizado con cifrado de payloads sensibles para peticiones REST API.
+Sesiones del Sistema: Gestión de sesiones mediante Tokens de Autenticación (Bearer Tokens) o cookies HttpOnly y SameSite para prevenir ataques CSRF/XSS
+5. OTROS REQUISITOS NO FUNCIONALES
+5.1 Requisitos de desempeño
+RNF-001: El sistema deberá responder a las operaciones comunes en un tiempo razonable.
+RNF-002: Las consultas de saldos deberán ejecutarse rápidamente.
+RNF-003: El sistema deberá soportar múltiples usuarios conectados simultáneamente.
+RNF-004: Las operaciones financieras deberán procesarse de forma transaccional.
+RNF-005: El sistema deberá evitar la duplicación de operaciones.
+5.2 Requisitos de seguridad
+La seguridad será uno de los aspectos principales del sistema.
+RNF-006: El sistema deberá requerir autenticación para acceder.
+RNF-007: Las contraseñas deberán almacenarse utilizando mecanismos de hash seguros.
+RNF-008: El sistema deberá implementar control de acceso basado en roles.
+RNF-009: Los cajeros no deberán acceder a funciones administrativas si no poseen los permisos correspondientes.
+RNF-010: El sistema deberá registrar las operaciones realizadas por cada usuario.
+RNF-011: El sistema deberá cerrar la sesión después de un período determinado de inactividad.
+RNF-012: Las comunicaciones deberán utilizar mecanismos de cifrado.
+RNF-013: Las operaciones financieras deberán quedar registradas en una bitácora.
+5.3 Requisitos de estabilidad
+RNF-014: El sistema deberá mantener la integridad de la información ante errores.
+RNF-015: El sistema deberá contar con mecanismos de respaldo de la base de datos.
+RNF-016: Una operación financiera incompleta no deberá modificar parcialmente el saldo.
+RNF-017: El sistema deberá permitir recuperar la información mediante backups.
+RNF-018: El sistema deberá evitar pérdida de información ante fallos del sistema.
+Atributos de calidad del software
+Usabilidad: La interfaz debe ser intuitiva, con flujos de trabajo en ventanilla diseñados para requerir la menor cantidad de clics por operación. Los errores de formulario deben indicar con claridad el campo y la razón del fallo en lenguaje comprensible. 
+Disponibilidad: El sistema debe alcanzar un nivel de disponibilidad operativa del 99.5% durante el horario de atención institucional. 
+Escalabilidad: La arquitectura modular en capas debe permitir la incorporación de nuevos módulos (ej. Banca Móvil, Transferencias Interbancarias) sin alterar la lógica existente. 
+Mantenibilidad: El código fuente debe estar adecuadamente estructurado, documentado y seguir patrones de diseño estándar (MVC / Repository Pattern) para facilitar auditorías y actualizaciones de software. 
+Diagrama de Base de datos sugerida:
