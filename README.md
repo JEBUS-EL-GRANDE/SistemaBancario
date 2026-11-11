@@ -97,7 +97,7 @@ Usuario encargado de realizar las operaciones cotidianas de atencion al cliente 
 
 <h2 id="basededatosA">tabla de base de datos relacional: </h2> 
 
-<img src="public/BD.png">
+<img src="public/DBbancario.png">
 
 ---
 <h2 id="InstalacionA">Instalación Y Configuración local en diferentes Sistemas Operativos:</h2>
