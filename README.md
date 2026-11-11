@@ -66,9 +66,9 @@ El sistema utiliza una arquitectura web de tres capas, organizada mediante el pa
 **Tecnologias utilizadas:** PostgreSQL, Eloquent ORM, Migraciones de Laravel, Relaciones mediante claves primarias y foraneas.
 
 <h2 id="rolesA">Roles del Sistema</h2>
-El sistema cuenta con **2 roles**
+El sistema cuenta con **4 roles** (administrador,cajero,ejecutivo_credito,cliente)
 
-#### 1. ADMINISTRADOR 
+#### 1. administrador
 Usuario encargado de administrar y controlar el funcionamiento general del sistema bancario.
 - Gestion completa de clientes y usuarios.
 - Administracion de tipos de cuentas y servicios bancarios.
@@ -78,7 +78,7 @@ Usuario encargado de administrar y controlar el funcionamiento general del siste
 - Gestion de copias de seguridad y restauracion de la base de datos.
 - Control de operaciones administrativas y auditoria.
 
-#### 2. CAJERO
+#### 2. cajero
 Usuario encargado de realizar las operaciones cotidianas de atencion al cliente y transacciones en caja.
 
 - Registro de nuevos clientes.
@@ -86,7 +86,11 @@ Usuario encargado de realizar las operaciones cotidianas de atencion al cliente 
 - Apertura de cuentas bancarias.
 - Registro de depositos, retiros y transferencias.
 - Consulta de informacion de saldos y movimientos.
-- Generacion de reportes operativos segon los permisos asignados\
+- Generacion de reportes operativos segon los permisos asignados
+
+#### 3. ejecutivo_credito
+
+#### 4. cliente 
 --------------------------------------------------------------------------------
 ## Modelo de Base de Datos relacional (9 tablas)
 
@@ -146,18 +150,9 @@ con este primer usuario podras crear al resto de usuarios que tienen roles:
 
 <img src="public/BDimg.jpeg">
 
-**Tabla personas:**
+**Tabla users:**
 ```bash
-INSERT INTO personas (ci,nombre, apellido,sexo, fecha_registro) 
-VALUES ('9800001', 'juan', 'perez', 'M', '2000-01-01');
+INSERT INTO usuarios (id,name,apellidos,username,rol,estado,email,password)VALUES (1,'juan','perez','Mrjuan','administrador','activo','admin@gmail.com',$2y$12$bXIEjgObeJirXky9sGaSreKr1nPs0sH3iqvdWVeztJRlutJ857qpa);
 ```
-**Tabla turnos:**
-```bash
-INSERT INTO turnos (nombre_turno, hora_inicio, hora_fin) 
-VALUES ('mediodia', '08:00:00', '17:00:00');
-```
-**Tabla usuarios:**
-```bash
-INSERT INTO usuarios (id_persona,id_turno,email,contrasenia,login,rol,fecha_contrato,estado)VALUES (1,'1','admin@gmail.com','$2y$12$3qeoc6WEOwvoObsZvEf4gu69aU59gEPpLABryASrE1etWLQY1noEO','admin','Administrador',NOW(),1);
-```
-con esto podras acceder al proyecto, solo pon en el login **"admin"**   y la contraseña es **"12345678"** que viene siendo la contraseña encriptada que pusiste de la tabla **usuarios**
+con esto podras acceder al proyecto, solo pon en el login **admin@gmail.com**   y la contraseña es **"12345678"** que viene siendo la contraseña encriptada que pusiste de la tabla **users**
+
