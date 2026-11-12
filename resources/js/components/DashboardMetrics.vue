@@ -1,11 +1,3 @@
-### Entregable 2: Mejora Frontend (Componente de Tarjetas de Métricas Resumen)
-
-He diseñado una mejora visual y funcional reutilizable usando **Vue 3 (`<script setup>`)** y **Tailwind CSS**. Este componente servirá para presentar de forma atractiva las métricas principales en el Dashboard (Total Clientes, Cuentas Activas, Saldo Total, Préstamos Pendientes, etc.) con formato de moneda, indicadores de tendencia y diseño responsivo.
-
-Crea un archivo nuevo en tu proyecto en la ruta:  
-`resources/js/components/DashboardMetrics.vue`
-
-```vue
 <script setup>
 defineProps({
   metrics: {

@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
+import DashboardMetrics from '@/components/DashboardMetrics.vue';
+import TransactionHistory from '@/components/TransactionHistory.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, usePage } from '@inertiajs/vue3';
 import {
@@ -196,6 +198,10 @@ const currentActions =
                     <p v-else>Puedes gestionar solicitudes de crédito, aprobar préstamos y consultar la cartera de clientes.</p>
                 </div>
             </div>
+
+            <!-- Componentes de Métricas y Transacciones Recientes -->
+            <DashboardMetrics />
+            <TransactionHistory />
 
         </div>
     </AppLayout>
