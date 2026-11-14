@@ -32,12 +32,12 @@ class TransferenciaController extends Controller
                     ->orWhereHas('cuentaOrigen', fn ($q) => $q->where('numero_cuenta', 'like', "%{$search}%"))
                     ->orWhereHas('cuentaDestino', fn ($q) => $q->where('numero_cuenta', 'like', "%{$search}%"))
                     ->orWhereHas('cuentaOrigen.cliente', function ($q) use ($search) {
-                        $q->where('nombres', 'ilike', "%{$search}%")
-                            ->orWhere('apellidos', 'ilike', "%{$search}%");
+                        $q->where('nombres', 'like', "%{$search}%")
+                            ->orWhere('apellidos', 'like', "%{$search}%");
                     })
                     ->orWhereHas('cuentaDestino.cliente', function ($q) use ($search) {
-                        $q->where('nombres', 'ilike', "%{$search}%")
-                            ->orWhere('apellidos', 'ilike', "%{$search}%");
+                        $q->where('nombres', 'like', "%{$search}%")
+                            ->orWhere('apellidos', 'like', "%{$search}%");
                     });
             })
             ->when($canal, fn ($q, $c) => $q->where('canal', $c))

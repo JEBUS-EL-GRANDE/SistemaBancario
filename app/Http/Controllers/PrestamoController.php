@@ -32,8 +32,8 @@ class PrestamoController extends Controller
             ->when($search, function ($query, $search) {
                 $query->where('codigo', 'like', "%{$search}%")
                     ->orWhereHas('cliente', function ($q) use ($search) {
-                        $q->where('nombres', 'ilike', "%{$search}%")
-                            ->orWhere('apellidos', 'ilike', "%{$search}%")
+                        $q->where('nombres', 'like', "%{$search}%")
+                            ->orWhere('apellidos', 'like', "%{$search}%")
                             ->orWhere('numero_documento', 'like', "%{$search}%");
                     });
             })

@@ -33,8 +33,8 @@ class RetiroController extends Controller
                 $query->where('referencia', 'like', "%{$search}%")
                     ->orWhereHas('cuenta', fn ($q) => $q->where('numero_cuenta', 'like', "%{$search}%"))
                     ->orWhereHas('cuenta.cliente', function ($q) use ($search) {
-                        $q->where('nombres', 'ilike', "%{$search}%")
-                            ->orWhere('apellidos', 'ilike', "%{$search}%");
+                        $q->where('nombres', 'like', "%{$search}%")
+                            ->orWhere('apellidos', 'like', "%{$search}%");
                     });
             })
             ->when($canal, fn ($q, $c) => $q->where('canal', $c))
