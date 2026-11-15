@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link, router } from '@inertiajs/vue3';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import {
     ArrowDownLeft,
     ArrowLeftRight,
@@ -15,7 +15,7 @@ import {
     Search,
     Wallet,
 } from 'lucide-vue-next';
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 interface TransferenciaItem {
     id: number;
@@ -26,10 +26,14 @@ interface TransferenciaItem {
     motivo: string;
     estado: string;
     created_at: string;
+    saldo_posterior_origen?: number;
+    saldo_posterior_destino?: number;
     cuenta_origen: {
         numero_cuenta: string;
         tipo: string;
         cliente: {
+            user_id?: number;
+            email?: string;
             nombres: string;
             apellidos: string;
         };
@@ -38,6 +42,8 @@ interface TransferenciaItem {
         numero_cuenta: string;
         tipo: string;
         cliente: {
+            user_id?: number;
+            email?: string;
             nombres: string;
             apellidos: string;
         };
@@ -73,6 +79,17 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
     { title: 'Transferencias', href: '/transferencias' },
 ];
+
+const page = usePage();
+const authUser = computed(() => (page.props.auth as any)?.user);
+const isCliente = computed(() => authUser.value?.rol === 'cliente');
+
+const esMiCuenta = (cta: any) => {
+    if (!cta?.cliente) return false;
+    const userEmail = authUser.value?.email?.toLowerCase();
+    const userId = authUser.value?.id;
+    return (cta.cliente.email && cta.cliente.email.toLowerCase() === userEmail) || cta.cliente.user_id === userId;
+};
 
 const search = ref(props.filters.search || '');
 const canal = ref(props.filters.canal || '');
@@ -204,11 +221,17 @@ const formatDate = (d: string) => {
                                     <div class="text-[11px] text-slate-400">
                                         {{ t.cuenta_origen.cliente.nombres }} {{ t.cuenta_origen.cliente.apellidos }}
                                     </div>
+                                    <div v-if="(!isCliente || esMiCuenta(t.cuenta_origen)) && t.saldo_posterior_origen !== undefined && t.saldo_posterior_origen !== null" class="text-[10px] text-slate-500 font-mono mt-0.5">
+                                        Queda: <span class="text-rose-400 font-semibold">{{ money(t.saldo_posterior_origen) }}</span>
+                                    </div>
                                 </td>
                                 <td class="px-5 py-3.5">
                                     <div class="font-mono text-emerald-400">{{ t.cuenta_destino.numero_cuenta }}</div>
                                     <div class="text-[11px] text-slate-400">
                                         {{ t.cuenta_destino.cliente.nombres }} {{ t.cuenta_destino.cliente.apellidos }}
+                                    </div>
+                                    <div v-if="(!isCliente || esMiCuenta(t.cuenta_destino)) && t.saldo_posterior_destino !== undefined && t.saldo_posterior_destino !== null" class="text-[10px] text-slate-500 font-mono mt-0.5">
+                                        Queda: <span class="text-emerald-400 font-semibold">{{ money(t.saldo_posterior_destino) }}</span>
                                     </div>
                                 </td>
                                 <td class="px-5 py-3.5 font-mono text-sm font-black text-emerald-400">

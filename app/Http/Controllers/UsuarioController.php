@@ -28,8 +28,8 @@ class UsuarioController extends Controller
             ->with('banco')
             ->when($user->banco_id !== null, fn ($q) => $q->where('banco_id', $user->banco_id))
             ->when($search, function ($query, $search) {
-                $query->where('name', 'ilike', "%{$search}%")
-                    ->orWhere('apellidos', 'ilike', "%{$search}%")
+                $query->where('name', 'like', "%{$search}%")
+                    ->orWhere('apellidos', 'like', "%{$search}%")
                     ->orWhere('username', 'like', "%{$search}%")
                     ->orWhere('email', 'like', "%{$search}%");
             })

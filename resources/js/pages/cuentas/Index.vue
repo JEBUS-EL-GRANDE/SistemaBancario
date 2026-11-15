@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link, router } from '@inertiajs/vue3';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import {
     ArrowDownLeft,
+    ArrowLeftRight,
     ArrowUpRight,
     CreditCard,
     Eye,
@@ -11,7 +12,11 @@ import {
     Search,
     Wallet,
 } from 'lucide-vue-next';
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
+
+const page = usePage();
+const authUser = computed(() => (page.props.auth as any)?.user);
+const isCliente = computed(() => authUser.value?.rol === 'cliente');
 
 interface Cliente {
     id: number;
@@ -82,19 +87,30 @@ watch([search, tipo, estado], filtrar);
                 <div>
                     <h1 class="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
                         <Wallet class="h-7 w-7 text-emerald-400" />
-                        Cuentas Bancarias
+                        {{ isCliente ? 'Mis Cuentas Bancarias' : 'Cuentas Bancarias' }}
                     </h1>
                     <p class="text-sm text-slate-400 mt-1">
-                        Apertura, parametrización y administración de cuentas de ahorro y corrientes (RF-006, RF-008).
+                        {{ isCliente ? 'Consulta de saldos disponibles, límites diarios y movimientos de sus cuentas.' : 'Apertura, parametrización y administración de cuentas de ahorro y corrientes (RF-006, RF-008).' }}
                     </p>
                 </div>
-                <Link
-                    href="/cuentas/create"
-                    class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-500/20 hover:from-emerald-500 hover:to-teal-500 transition-all cursor-pointer"
-                >
-                    <Plus class="h-4 w-4" />
-                    Abrir Nueva Cuenta
-                </Link>
+                <div class="flex items-center gap-2">
+                    <Link
+                        v-if="!isCliente"
+                        href="/cuentas/create"
+                        class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-500/20 hover:from-emerald-500 hover:to-teal-500 transition-all cursor-pointer"
+                    >
+                        <Plus class="h-4 w-4" />
+                        Abrir Nueva Cuenta
+                    </Link>
+                    <Link
+                        v-else
+                        href="/transferencias/create"
+                        class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-500/20 hover:from-emerald-500 hover:to-teal-500 transition-all cursor-pointer"
+                    >
+                        <ArrowLeftRight class="h-4 w-4" />
+                        Nueva Transferencia
+                    </Link>
+                </div>
             </div>
 
             <!-- Filtros -->
@@ -192,22 +208,34 @@ watch([search, tipo, estado], filtrar);
                                             <Eye class="h-3.5 w-3.5" />
                                             Ver
                                         </Link>
-                                        <Link
-                                            :href="`/depositos/create?cuenta=${c.numero_cuenta}`"
-                                            class="rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 px-2 py-1.5 text-xs font-semibold text-emerald-400 border border-emerald-500/30 flex items-center gap-1"
-                                            title="Depositar"
-                                        >
-                                            <ArrowDownLeft class="h-3.5 w-3.5" />
-                                            Depósito
-                                        </Link>
-                                        <Link
-                                            :href="`/retiros/create?cuenta=${c.numero_cuenta}`"
-                                            class="rounded-lg bg-amber-500/10 hover:bg-amber-500/20 px-2 py-1.5 text-xs font-semibold text-amber-400 border border-amber-500/30 flex items-center gap-1"
-                                            title="Retirar"
-                                        >
-                                            <ArrowUpRight class="h-3.5 w-3.5" />
-                                            Retiro
-                                        </Link>
+                                        <template v-if="!isCliente">
+                                            <Link
+                                                :href="`/depositos/create?cuenta=${c.numero_cuenta}`"
+                                                class="rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 px-2 py-1.5 text-xs font-semibold text-emerald-400 border border-emerald-500/30 flex items-center gap-1"
+                                                title="Depositar"
+                                            >
+                                                <ArrowDownLeft class="h-3.5 w-3.5" />
+                                                Depósito
+                                            </Link>
+                                            <Link
+                                                :href="`/retiros/create?cuenta=${c.numero_cuenta}`"
+                                                class="rounded-lg bg-amber-500/10 hover:bg-amber-500/20 px-2 py-1.5 text-xs font-semibold text-amber-400 border border-amber-500/30 flex items-center gap-1"
+                                                title="Retirar"
+                                            >
+                                                <ArrowUpRight class="h-3.5 w-3.5" />
+                                                Retiro
+                                            </Link>
+                                        </template>
+                                        <template v-else>
+                                            <Link
+                                                :href="`/transferencias/create?origen=${c.numero_cuenta}`"
+                                                class="rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 px-2.5 py-1.5 text-xs font-semibold text-emerald-400 border border-emerald-500/30 flex items-center gap-1"
+                                                title="Transferir fondos"
+                                            >
+                                                <ArrowLeftRight class="h-3.5 w-3.5" />
+                                                Transferir
+                                            </Link>
+                                        </template>
                                     </div>
                                 </td>
                             </tr>

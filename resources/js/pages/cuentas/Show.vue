@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 import {
     ArrowDownLeft,
     ArrowLeft,
+    ArrowLeftRight,
     ArrowUpRight,
     CreditCard,
     History,
@@ -14,7 +15,11 @@ import {
     User,
     Wallet,
 } from 'lucide-vue-next';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
+
+const page = usePage();
+const authUser = computed(() => (page.props.auth as any)?.user);
+const isCliente = computed(() => authUser.value?.rol === 'cliente');
 
 interface Cliente {
     id: number;
@@ -38,9 +43,12 @@ interface Movimiento {
     id: number;
     referencia: string;
     tipo: string;
+    naturaleza?: string;
     monto: number;
-    saldo_anterior: number;
-    saldo_nuevo: number;
+    saldo_anterior?: number;
+    saldo_nuevo?: number;
+    saldo_previo?: number;
+    saldo_posterior?: number;
     canal: string;
     descripcion: string;
     created_at: string;
@@ -118,27 +126,38 @@ const cambiarEstado = () => {
                 </div>
 
                 <div class="flex flex-wrap items-center gap-2">
-                    <Link
-                        :href="`/depositos/create?cuenta=${cuenta.numero_cuenta}`"
-                        class="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-emerald-500/20 hover:from-emerald-500 hover:to-teal-500 transition-all cursor-pointer"
-                    >
-                        <ArrowDownLeft class="h-4 w-4" />
-                        Registrar Depósito
-                    </Link>
-                    <Link
-                        :href="`/retiros/create?cuenta=${cuenta.numero_cuenta}`"
-                        class="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-amber-500/20 hover:from-amber-500 hover:to-orange-500 transition-all cursor-pointer"
-                    >
-                        <ArrowUpRight class="h-4 w-4" />
-                        Procesar Retiro
-                    </Link>
-                    <button
-                        @click="showModalEstado = true"
-                        class="inline-flex items-center gap-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 px-3.5 py-2.5 text-sm font-semibold text-slate-300 hover:text-white transition-all cursor-pointer"
-                    >
-                        <Lock class="h-4 w-4 text-slate-400" />
-                        Cambiar Estado
-                    </button>
+                    <template v-if="!isCliente">
+                        <Link
+                            :href="`/depositos/create?cuenta=${cuenta.numero_cuenta}`"
+                            class="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-emerald-500/20 hover:from-emerald-500 hover:to-teal-500 transition-all cursor-pointer"
+                        >
+                            <ArrowDownLeft class="h-4 w-4" />
+                            Registrar Depósito
+                        </Link>
+                        <Link
+                            :href="`/retiros/create?cuenta=${cuenta.numero_cuenta}`"
+                            class="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-amber-500/20 hover:from-amber-500 hover:to-orange-500 transition-all cursor-pointer"
+                        >
+                            <ArrowUpRight class="h-4 w-4" />
+                            Procesar Retiro
+                        </Link>
+                        <button
+                            @click="showModalEstado = true"
+                            class="inline-flex items-center gap-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 px-3.5 py-2.5 text-sm font-semibold text-slate-300 hover:text-white transition-all cursor-pointer"
+                        >
+                            <Lock class="h-4 w-4 text-slate-400" />
+                            Cambiar Estado
+                        </button>
+                    </template>
+                    <template v-else>
+                        <Link
+                            :href="`/transferencias/create?origen=${cuenta.numero_cuenta}`"
+                            class="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-emerald-500/20 hover:from-emerald-500 hover:to-teal-500 transition-all cursor-pointer"
+                        >
+                            <ArrowLeftRight class="h-4 w-4" />
+                            Nueva Transferencia
+                        </Link>
+                    </template>
                     <Link
                         href="/cuentas"
                         class="inline-flex items-center gap-1.5 rounded-xl bg-slate-800 px-3.5 py-2.5 text-sm font-semibold text-slate-300 hover:bg-slate-700 transition-all"
@@ -296,7 +315,7 @@ const cambiarEstado = () => {
                                 </td>
                                 <td class="px-4 py-3">
                                     <span
-                                        :class="m.tipo.includes('deposito') ? 'text-emerald-400 bg-emerald-500/10' : 'text-amber-400 bg-amber-500/10'"
+                                        :class="m.naturaleza === 'credito' || m.tipo.includes('deposito') || m.tipo === 'transferencia_credito' ? 'text-emerald-400 bg-emerald-500/10' : 'text-amber-400 bg-amber-500/10'"
                                         class="rounded px-2 py-0.5 text-xs font-semibold uppercase"
                                     >
                                         {{ m.tipo }}
@@ -309,13 +328,13 @@ const cambiarEstado = () => {
                                     {{ m.descripcion }}
                                 </td>
                                 <td
-                                    :class="m.tipo.includes('deposito') ? 'text-emerald-400 font-semibold' : 'text-rose-400 font-semibold'"
+                                    :class="m.naturaleza === 'credito' || m.tipo.includes('deposito') || m.tipo === 'transferencia_credito' ? 'text-emerald-400 font-semibold' : 'text-rose-400 font-semibold'"
                                     class="px-4 py-3 text-right font-mono"
                                 >
-                                    {{ m.tipo.includes('deposito') ? '+' : '-' }}{{ money(m.monto) }}
+                                    {{ (m.naturaleza === 'credito' || m.tipo.includes('deposito') || m.tipo === 'transferencia_credito') ? '+' : '-' }}{{ money(m.monto) }}
                                 </td>
                                 <td class="px-4 py-3 text-right font-mono text-white font-semibold">
-                                    {{ money(m.saldo_nuevo) }}
+                                    {{ money(m.saldo_posterior ?? m.saldo_nuevo) }}
                                 </td>
                             </tr>
                         </tbody>

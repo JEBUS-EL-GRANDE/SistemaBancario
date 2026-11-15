@@ -83,7 +83,7 @@ watch([search, tipo], filtrar);
                         Historial de Depósitos
                     </h1>
                     <p class="text-sm text-slate-400 mt-1">
-                        Control de ingresos en efectivo, cheques y transferencias.
+                        Control de depósitos recibidos en ventanilla y terminales (efectivo y cheques). Para consultar traspasos entre cuentas, vea <Link href="/transferencias" class="text-emerald-400 hover:underline">Transferencias</Link>.
                     </p>
                 </div>
                 <Link

@@ -24,10 +24,10 @@ class ClienteController extends Controller
 
         $clientes = Cliente::query()
             ->when($search, function ($query, $search) {
-                $query->where('numero_documento', 'ilike', "%{$search}%")
-                    ->orWhere('nombres', 'ilike', "%{$search}%")
-                    ->orWhere('apellidos', 'ilike', "%{$search}%")
-                    ->orWhere('email', 'ilike', "%{$search}%");
+                $query->where('numero_documento', 'like', "%{$search}%")
+                    ->orWhere('nombres', 'like', "%{$search}%")
+                    ->orWhere('apellidos', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
             })
             ->withCount('cuentas', 'prestamos')
             ->orderBy('id', 'desc')

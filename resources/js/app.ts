@@ -5,7 +5,7 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import type { DefineComponent } from 'vue';
 import { createApp, h } from 'vue';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
-import { initializeTheme } from './composables/useAppearance';
+import { initializeCustomAppearance, initializeTheme } from './composables/useAppearance';
 
 // Extend ImportMeta interface for Vite...
 declare module 'vite/client' {
@@ -38,3 +38,5 @@ createInertiaApp({
 
 // This will set light / dark mode on page load...
 initializeTheme();
+// Apply custom appearance preferences (accent, bg, font, density)...
+initializeCustomAppearance();
