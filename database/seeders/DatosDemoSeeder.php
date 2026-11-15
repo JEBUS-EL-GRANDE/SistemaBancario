@@ -15,8 +15,6 @@ use App\Models\Retiro;
 use App\Models\Transferencia;
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class DatosDemoSeeder extends Seeder
 {
@@ -30,6 +28,7 @@ class DatosDemoSeeder extends Seeder
 
         if (! $bancoMercantil || ! $bancoUnion) {
             $this->command->error('Primero debes ejecutar BancoSeeder.');
+
             return;
         }
 

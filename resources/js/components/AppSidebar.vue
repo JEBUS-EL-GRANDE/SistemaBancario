@@ -14,6 +14,7 @@ import {
     Folder,
     LayoutGrid,
     Shield,
+    Sparkles,
     Users,
     Wallet,
 } from 'lucide-vue-next';
@@ -46,6 +47,11 @@ const mainNavItems = computed(() => {
                 title: 'Simulador Cuotas',
                 href: '/prestamos/simulador',
                 icon: Calculator,
+            },
+            {
+                title: 'Metodología UI/UX',
+                href: '/metodologia-ui-ux',
+                icon: Sparkles,
             },
         ];
     }
@@ -122,6 +128,12 @@ const mainNavItems = computed(() => {
             icon: Shield,
         });
     }
+
+    items.push({
+        title: 'Metodología UI/UX',
+        href: '/metodologia-ui-ux',
+        icon: Sparkles,
+    });
 
     return items;
 });

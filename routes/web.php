@@ -12,6 +12,7 @@ use App\Http\Controllers\RetiroController;
 use App\Http\Controllers\TransferenciaController;
 use App\Http\Controllers\UsuarioController;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -20,6 +21,11 @@ Route::get('/', function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     // Panel de Control
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Metodología y Proceso de Diseño UI/UX (Norman, Garrett, IDEO, Nielsen)
+    Route::get('metodologia-ui-ux', function () {
+        return Inertia::render('MetodologiaUiUx');
+    })->name('metodologia.ui-ux');
 
     // Módulo de Gestión de Clientes (RF-004, RF-005) - Reservado a personal bancario
     Route::middleware('rol:administrador,cajero,ejecutivo_credito')->group(function () {
