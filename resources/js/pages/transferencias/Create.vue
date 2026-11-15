@@ -2,7 +2,7 @@
 import BiometricScannerModal from '@/components/BiometricScannerModal.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 import {
     AlertCircle,
     ArrowLeft,
@@ -19,6 +19,19 @@ import {
 } from 'lucide-vue-next';
 import { computed, onMounted, ref } from 'vue';
 
+interface CuentaItem {
+    id: number;
+    numero_cuenta: string;
+    tipo: string;
+    saldo: number;
+    moneda: string;
+    cliente?: {
+        nombres: string;
+        apellidos: string;
+        numero_documento: string;
+    };
+}
+
 interface Props {
     cuentaPrevia?: {
         numero_cuenta: string;
@@ -32,6 +45,7 @@ interface Props {
             numero_documento: string;
         };
     } | null;
+    misCuentas?: CuentaItem[];
 }
 
 const props = defineProps<Props>();
@@ -134,7 +148,30 @@ const buscarCuentaDestino = async () => {
     }
 };
 
+const page = usePage();
+const authUser = computed(() => (page.props.auth as any)?.user);
+const isCliente = computed(() => authUser.value?.rol === 'cliente');
+
+const seleccionarCuentaOrigen = () => {
+    const cta = props.misCuentas?.find((c) => c.numero_cuenta === form.cuenta_origen);
+    if (cta) {
+        infoOrigen.value = {
+            id: cta.id,
+            titular: cta.cliente ? `${cta.cliente.nombres} ${cta.cliente.apellidos}` : `${authUser.value?.name || ''} ${authUser.value?.apellidos || ''}`.trim(),
+            documento: cta.cliente?.numero_documento || '',
+            tipo: cta.tipo,
+            saldo: Number(cta.saldo),
+            estado: 'activa',
+        };
+    }
+};
+
 onMounted(() => {
+    if (isCliente.value) {
+        form.canal = 'banca_web';
+        form.metodo_autenticacion = '2fa';
+    }
+
     if (props.cuentaPrevia) {
         infoOrigen.value = {
             titular: `${props.cuentaPrevia.cliente.nombres} ${props.cuentaPrevia.cliente.apellidos}`,
@@ -144,6 +181,9 @@ onMounted(() => {
             estado: props.cuentaPrevia.estado,
             cliente_id: props.cuentaPrevia.cliente.id,
         };
+    } else if (props.misCuentas && props.misCuentas.length > 0) {
+        form.cuenta_origen = props.misCuentas[0].numero_cuenta;
+        seleccionarCuentaOrigen();
     }
 });
 
@@ -200,9 +240,25 @@ const submit = () => {
                         <!-- Origen -->
                         <div class="space-y-2">
                             <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300">
-                                1. Cuenta de Origen <span class="text-rose-500">*</span>
+                                1. Cuenta de Origen (Débito) <span class="text-rose-500">*</span>
                             </label>
-                            <div class="flex gap-2">
+                            
+                            <!-- Selector si es cliente o tiene cuentas cargadas -->
+                            <div v-if="misCuentas && misCuentas.length > 0">
+                                <select
+                                    v-model="form.cuenta_origen"
+                                    @change="seleccionarCuentaOrigen"
+                                    class="w-full rounded-xl bg-slate-950/70 border border-slate-700/80 px-4 py-2.5 font-mono text-sm text-white focus:outline-none focus:border-emerald-500"
+                                >
+                                    <option value="" disabled>Seleccione cuenta de débito...</option>
+                                    <option v-for="cta in misCuentas" :key="cta.id" :value="cta.numero_cuenta">
+                                        {{ cta.numero_cuenta }} ({{ cta.tipo }}) — Saldo: {{ money(cta.saldo) }}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <!-- Input libre con consulta para administradores/cajeros -->
+                            <div v-else class="flex gap-2">
                                 <div class="relative flex-1">
                                     <Wallet class="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
                                     <input

@@ -67,6 +67,10 @@ class CuentaController extends Controller
      */
     public function create(Request $request): Response
     {
+        if ($request->user()?->isCliente()) {
+            abort(403, 'La apertura de cuentas bancarias está reservada para el personal de caja o administración.');
+        }
+
         $clienteId = $request->input('cliente_id');
         $clientes = Cliente::where('estado', 'activo')
             ->select('id', 'nombres', 'apellidos', 'numero_documento', 'email')
@@ -84,6 +88,9 @@ class CuentaController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        if ($request->user()?->isCliente()) {
+            abort(403, 'La apertura de cuentas bancarias está reservada para el personal de caja o administración.');
+        }
         $validated = $request->validate([
             'cliente_id' => ['required', 'exists:clientes,id'],
             'tipo' => ['required', 'in:ahorro,corriente'],
@@ -186,8 +193,18 @@ class CuentaController extends Controller
     /**
      * Muestra el detalle de la cuenta, titular, tarjeta y movimientos recientes.
      */
-    public function show(Cuenta $cuenta): Response
+    public function show(Request $request, Cuenta $cuenta): Response
     {
+        $user = $request->user();
+        if ($user?->isCliente()) {
+            $isOwner = ($cuenta->cliente?->user_id === $user->id) ||
+                (strtolower($cuenta->cliente?->email ?? '') === strtolower($user->email ?? ''));
+
+            if (! $isOwner) {
+                abort(403, 'No tiene autorización para visualizar esta cuenta bancaria.');
+            }
+        }
+
         $cuenta->load([
             'cliente',
             'tarjeta',
@@ -207,6 +224,10 @@ class CuentaController extends Controller
      */
     public function cambiarEstado(Request $request, Cuenta $cuenta): RedirectResponse
     {
+        if ($request->user()?->isCliente()) {
+            abort(403, 'No tiene permisos para modificar el estado de una cuenta bancaria.');
+        }
+
         $validated = $request->validate([
             'estado' => ['required', 'in:activa,bloqueada,inactiva,cancelada'],
             'motivo' => ['nullable', 'string', 'max:255'],
@@ -240,16 +261,23 @@ class CuentaController extends Controller
             return response()->json(['encontrada' => false, 'mensaje' => 'Cuenta no encontrada'], 404);
         }
 
+        $user = $request->user();
+        $puedeVerSaldo = true;
+        if ($user?->isCliente()) {
+            $puedeVerSaldo = ($cuenta->cliente?->user_id === $user->id) ||
+                (strtolower($cuenta->cliente?->email ?? '') === strtolower($user->email ?? ''));
+        }
+
         return response()->json([
             'encontrada' => true,
             'id' => $cuenta->id,
             'numero_cuenta' => $cuenta->numero_cuenta,
             'tipo' => $cuenta->tipo,
             'moneda' => $cuenta->moneda,
-            'saldo' => $cuenta->saldo,
+            'saldo' => $puedeVerSaldo ? $cuenta->saldo : null,
             'estado' => $cuenta->estado,
-            'limite_retiro_diario' => $cuenta->limite_retiro_diario,
-            'retiro_acumulado_hoy' => $cuenta->retiro_acumulado_hoy,
+            'limite_retiro_diario' => $puedeVerSaldo ? $cuenta->limite_retiro_diario : null,
+            'retiro_acumulado_hoy' => $puedeVerSaldo ? $cuenta->retiro_acumulado_hoy : null,
             'titular' => $cuenta->cliente->nombreCompleto(),
             'documento_titular' => $cuenta->cliente->numero_documento,
             'cliente_id' => $cuenta->cliente_id,

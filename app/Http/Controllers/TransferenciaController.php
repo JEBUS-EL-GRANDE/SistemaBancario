@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Bitacora;
+use App\Models\Cliente;
 use App\Models\Cuenta;
 use App\Models\Movimiento;
 use App\Models\Transferencia;
@@ -25,8 +26,26 @@ class TransferenciaController extends Controller
         $fechaInicio = $request->input('fecha_inicio');
         $fechaFin = $request->input('fecha_fin');
 
+        $user = $request->user();
+        $misCuentaIds = [];
+        if ($user?->isCliente()) {
+            $cliente = Cliente::where('user_id', $user->id)
+                ->orWhereRaw('LOWER(email) = ?', [strtolower($user->email)])
+                ->first();
+
+            $misCuentaIds = $cliente
+                ? Cuenta::where('cliente_id', $cliente->id)->pluck('id')->all()
+                : [-1];
+        }
+
         $transferencias = Transferencia::query()
             ->with(['cuentaOrigen.cliente', 'cuentaDestino.cliente', 'usuario'])
+            ->when($user?->isCliente(), function ($query) use ($misCuentaIds) {
+                $query->where(function ($q) use ($misCuentaIds) {
+                    $q->whereIn('cuenta_origen_id', $misCuentaIds ?: [-1])
+                        ->orWhereIn('cuenta_destino_id', $misCuentaIds ?: [-1]);
+                });
+            })
             ->when($search, function ($query, $search) {
                 $query->where('referencia', 'like', "%{$search}%")
                     ->orWhereHas('cuentaOrigen', fn ($q) => $q->where('numero_cuenta', 'like', "%{$search}%"))
@@ -63,10 +82,26 @@ class TransferenciaController extends Controller
      */
     public function create(Request $request): Response
     {
+        $user = $request->user();
         $cuentaOrigenParam = $request->input('origen');
         $cuentaPrevia = null;
+        $misCuentas = [];
 
-        if ($cuentaOrigenParam) {
+        if ($user?->isCliente()) {
+            $misCuentas = Cuenta::with('cliente')
+                ->whereHas('cliente', function ($q) use ($user) {
+                    $q->where('user_id', $user->id)
+                        ->orWhereRaw('LOWER(email) = ?', [strtolower($user->email)]);
+                })
+                ->where('estado', 'activa')
+                ->get();
+
+            if ($cuentaOrigenParam) {
+                $cuentaPrevia = $misCuentas->firstWhere('numero_cuenta', $cuentaOrigenParam);
+            } elseif ($misCuentas->isNotEmpty()) {
+                $cuentaPrevia = $misCuentas->first();
+            }
+        } elseif ($cuentaOrigenParam) {
             $cuentaPrevia = Cuenta::with('cliente')
                 ->where('numero_cuenta', $cuentaOrigenParam)
                 ->first();
@@ -74,6 +109,7 @@ class TransferenciaController extends Controller
 
         return Inertia::render('transferencias/Create', [
             'cuentaPrevia' => $cuentaPrevia,
+            'misCuentas' => $misCuentas,
         ]);
     }
 
@@ -102,6 +138,17 @@ class TransferenciaController extends Controller
             $origen = Cuenta::where('numero_cuenta', $validated['cuenta_origen'])->lockForUpdate()->firstOrFail();
             /** @var Cuenta $destino */
             $destino = Cuenta::where('numero_cuenta', $validated['cuenta_destino'])->lockForUpdate()->firstOrFail();
+
+            $user = $request->user();
+            if ($user?->isCliente()) {
+                $cliente = Cliente::where('user_id', $user->id)
+                    ->orWhereRaw('LOWER(email) = ?', [strtolower($user->email)])
+                    ->first();
+
+                if (! $cliente || $origen->cliente_id !== $cliente->id) {
+                    abort(403, 'Solo puede realizar transferencias desde sus propias cuentas bancarias.');
+                }
+            }
 
             // 1. Validar estados
             if ($origen->estado !== 'activa') {
@@ -194,8 +241,24 @@ class TransferenciaController extends Controller
     /**
      * Muestra el comprobante oficial de la transferencia bancaria.
      */
-    public function show(Transferencia $transferencia): Response
+    public function show(Request $request, Transferencia $transferencia): Response
     {
+        $user = $request->user();
+
+        if ($user?->isCliente()) {
+            $cliente = Cliente::where('user_id', $user->id)
+                ->orWhereRaw('LOWER(email) = ?', [strtolower($user->email)])
+                ->first();
+
+            $clienteId = $cliente?->id;
+            $cuentaOrigenClienteId = $transferencia->cuentaOrigen?->cliente_id;
+            $cuentaDestinoClienteId = $transferencia->cuentaDestino?->cliente_id;
+
+            if (! $clienteId || ($cuentaOrigenClienteId !== $clienteId && $cuentaDestinoClienteId !== $clienteId)) {
+                abort(403, 'No tiene autorización para visualizar esta transferencia bancaria.');
+            }
+        }
+
         $transferencia->load([
             'cuentaOrigen.cliente',
             'cuentaDestino.cliente',

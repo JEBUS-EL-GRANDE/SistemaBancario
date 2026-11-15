@@ -219,11 +219,11 @@ const imprimir = () => {
                                     <div>{{ m.cuenta?.numero_cuenta }}</div>
                                     <div class="text-[11px] text-slate-500">{{ m.cuenta?.cliente?.nombres }} {{ m.cuenta?.cliente?.apellidos }}</div>
                                 </td>
-                                <td :class="m.tipo.includes('deposito') ? 'text-emerald-400' : 'text-rose-400'" class="px-6 py-3 text-right font-bold print:text-black">
-                                    {{ m.tipo.includes('deposito') ? '+' : '-' }}{{ money(m.monto) }}
+                                <td :class="m.naturaleza === 'credito' || m.tipo.includes('deposito') || m.tipo === 'transferencia_credito' ? 'text-emerald-400' : 'text-rose-400'" class="px-6 py-3 text-right font-bold print:text-black">
+                                    {{ (m.naturaleza === 'credito' || m.tipo.includes('deposito') || m.tipo === 'transferencia_credito') ? '+' : '-' }}{{ money(m.monto) }}
                                 </td>
-                                <td class="px-6 py-3 text-right text-slate-400 print:text-black">{{ money(m.saldo_anterior) }}</td>
-                                <td class="px-6 py-3 text-right font-bold text-white print:text-black">{{ money(m.saldo_nuevo) }}</td>
+                                <td class="px-6 py-3 text-right text-slate-400 print:text-black">{{ money(m.saldo_previo ?? m.saldo_anterior) }}</td>
+                                <td class="px-6 py-3 text-right font-bold text-white print:text-black">{{ money(m.saldo_posterior ?? m.saldo_nuevo) }}</td>
                             </tr>
                         </tbody>
                     </table>

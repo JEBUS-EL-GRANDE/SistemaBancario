@@ -2,7 +2,7 @@
 import ComprobanteBancario from '@/components/ComprobanteBancario.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, usePage } from '@inertiajs/vue3';
 import {
     ArrowLeft,
     ArrowLeftRight,
@@ -29,6 +29,8 @@ interface Props {
             numero_cuenta: string;
             tipo: string;
             cliente: {
+                user_id?: number;
+                email?: string;
                 nombres: string;
                 apellidos: string;
                 numero_documento: string;
@@ -38,6 +40,8 @@ interface Props {
             numero_cuenta: string;
             tipo: string;
             cliente: {
+                user_id?: number;
+                email?: string;
                 nombres: string;
                 apellidos: string;
                 numero_documento: string;
@@ -75,36 +79,83 @@ const cajeroNombre = computed(() => {
         : 'Sistema Central';
 });
 
-const datosComprobante = computed(() => [
-    {
-        label: 'Cuenta Origen (Débito)',
-        valor: `${props.transferencia.cuenta_origen.numero_cuenta} (${props.transferencia.cuenta_origen.cliente.nombres} ${props.transferencia.cuenta_origen.cliente.apellidos})`,
-    },
-    {
-        label: 'Doc. Titular Origen',
-        valor: props.transferencia.cuenta_origen.cliente.numero_documento,
-    },
-    {
-        label: 'Cuenta Destino (Crédito)',
-        valor: `${props.transferencia.cuenta_destino.numero_cuenta} (${props.transferencia.cuenta_destino.cliente.nombres} ${props.transferencia.cuenta_destino.cliente.apellidos})`,
-    },
-    {
-        label: 'Doc. Titular Destino',
-        valor: props.transferencia.cuenta_destino.cliente.numero_documento,
-    },
-    {
-        label: 'Concepto / Motivo',
-        valor: props.transferencia.motivo || 'Traspaso de fondos entre cuentas',
-    },
-    {
-        label: 'Método de Autenticación',
-        valor: props.transferencia.metodo_autenticacion.toUpperCase(),
-    },
-    {
-        label: 'Estado de la Transacción',
-        valor: props.transferencia.estado.toUpperCase(),
-    },
-]);
+const page = usePage();
+const authUser = computed(() => (page.props.auth as any)?.user);
+const isCliente = computed(() => authUser.value?.rol === 'cliente');
+
+const esMiCuenta = (cta: any) => {
+    if (!cta?.cliente) return false;
+    const userEmail = authUser.value?.email?.toLowerCase();
+    const userId = authUser.value?.id;
+    return (cta.cliente.email && cta.cliente.email.toLowerCase() === userEmail) || cta.cliente.user_id === userId;
+};
+
+const datosComprobante = computed(() => {
+    const list: Array<{ label: string; valor: string | number }> = [
+        {
+            label: 'Cuenta Origen (Débito)',
+            valor: `${props.transferencia.cuenta_origen.numero_cuenta} (${props.transferencia.cuenta_origen.cliente.nombres} ${props.transferencia.cuenta_origen.cliente.apellidos})`,
+        },
+        {
+            label: 'Doc. Titular Origen',
+            valor: props.transferencia.cuenta_origen.cliente.numero_documento,
+        },
+    ];
+
+    if (!isCliente.value || esMiCuenta(props.transferencia.cuenta_origen)) {
+        list.push(
+            {
+                label: 'Saldo Anterior Origen',
+                valor: `Bs. ${Number(props.transferencia.saldo_previo_origen).toLocaleString('es-BO', { minimumFractionDigits: 2 })}`,
+            },
+            {
+                label: 'Nuevo Saldo Origen',
+                valor: `Bs. ${Number(props.transferencia.saldo_posterior_origen).toLocaleString('es-BO', { minimumFractionDigits: 2 })}`,
+            }
+        );
+    }
+
+    list.push(
+        {
+            label: 'Cuenta Destino (Crédito)',
+            valor: `${props.transferencia.cuenta_destino.numero_cuenta} (${props.transferencia.cuenta_destino.cliente.nombres} ${props.transferencia.cuenta_destino.cliente.apellidos})`,
+        },
+        {
+            label: 'Doc. Titular Destino',
+            valor: props.transferencia.cuenta_destino.cliente.numero_documento,
+        }
+    );
+
+    if (!isCliente.value || esMiCuenta(props.transferencia.cuenta_destino)) {
+        list.push(
+            {
+                label: 'Saldo Anterior Destino',
+                valor: `Bs. ${Number(props.transferencia.saldo_previo_destino).toLocaleString('es-BO', { minimumFractionDigits: 2 })}`,
+            },
+            {
+                label: 'Nuevo Saldo Destino',
+                valor: `Bs. ${Number(props.transferencia.saldo_posterior_destino).toLocaleString('es-BO', { minimumFractionDigits: 2 })}`,
+            }
+        );
+    }
+
+    list.push(
+        {
+            label: 'Concepto / Motivo',
+            valor: props.transferencia.motivo || 'Traspaso de fondos entre cuentas',
+        },
+        {
+            label: 'Método de Autenticación',
+            valor: props.transferencia.metodo_autenticacion.toUpperCase(),
+        },
+        {
+            label: 'Estado de la Transacción',
+            valor: props.transferencia.estado.toUpperCase(),
+        }
+    );
+
+    return list;
+});
 </script>
 
 <template>

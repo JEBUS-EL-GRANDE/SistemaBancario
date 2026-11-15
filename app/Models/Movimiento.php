@@ -31,6 +31,24 @@ class Movimiento extends Model
         'usuario_id',
     ];
 
+    /**
+     * @var list<string>
+     */
+    protected $appends = [
+        'saldo_anterior',
+        'saldo_nuevo',
+    ];
+
+    public function getSaldoAnteriorAttribute(): ?string
+    {
+        return $this->saldo_previo;
+    }
+
+    public function getSaldoNuevoAttribute(): ?string
+    {
+        return $this->saldo_posterior;
+    }
+
     /** @return BelongsTo<Cuenta, $this> */
     public function cuenta(): BelongsTo
     {
