@@ -9,14 +9,17 @@ import {
     Award,
     BookOpen,
     CheckCircle2,
+    ClipboardCheck,
     Code,
     Compass,
+    Database,
     Download,
     Eye,
     FileCheck,
     FileCode,
     Fingerprint,
     HelpCircle,
+    Laptop,
     Layers,
     Lightbulb,
     MessageSquare,
@@ -212,6 +215,134 @@ const nielsenHeuristics = [
                             <Download class="w-4 h-4" />
                             Informe UI/UX (PDF)
                         </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección: Equipo de Desarrollo y Distribución de Responsabilidades (3 Roles) -->
+            <div class="space-y-4">
+                <div class="space-y-1">
+                    <span class="text-xs font-extrabold tracking-wider text-sky-400 uppercase">
+                        INGENIERÍA DE SOFTWARE I • SISTEMA BANCARIO MODULAR DE ALTA SEGURIDAD
+                    </span>
+                    <h2 class="text-lg md:text-xl font-semibold text-slate-300">
+                        Equipo de desarrollo y distribución de responsabilidades
+                    </h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <!-- CARLOS D. UGARTE -->
+                    <div class="rounded-2xl bg-[#0f172a] border border-blue-900/60 p-6 flex flex-col justify-between shadow-xl relative overflow-hidden group hover:border-blue-500/50 transition-all">
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-11 h-11 rounded-xl bg-blue-600/20 border border-blue-500/40 flex items-center justify-center text-blue-400 shrink-0">
+                                    <ClipboardCheck class="w-6 h-6" />
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-white text-base tracking-wide">CARLOS D. UGARTE</h3>
+                                    <p class="text-xs font-semibold text-sky-400 uppercase tracking-wider">PRODUCT OWNER + ANALISTA</p>
+                                </div>
+                            </div>
+                            <div class="h-px bg-slate-800 w-full"></div>
+                            <ul class="space-y-2.5 text-xs text-slate-300">
+                                <li class="flex items-start gap-2">
+                                    <ArrowRight class="w-3.5 h-3.5 text-sky-400 shrink-0 mt-0.5" />
+                                    <span>Definición de requisitos e historias de usuario.</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <ArrowRight class="w-3.5 h-3.5 text-sky-400 shrink-0 mt-0.5" />
+                                    <span>Priorización del Product Backlog.</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <ArrowRight class="w-3.5 h-3.5 text-sky-400 shrink-0 mt-0.5" />
+                                    <span>Diseño de base de datos PostgreSQL 16.</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <ArrowRight class="w-3.5 h-3.5 text-sky-400 shrink-0 mt-0.5" />
+                                    <span>Documentación y validación de entregables.</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-blue-300">
+                            <span class="font-semibold">Historias Asignadas:</span>
+                            <span class="px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/30 font-bold">HU-001, HU-002, HU-009</span>
+                        </div>
+                    </div>
+
+                    <!-- BENJAMÍN YUCRA -->
+                    <div class="rounded-2xl bg-[#0f172a] border border-sky-900/60 p-6 flex flex-col justify-between shadow-xl relative overflow-hidden group hover:border-sky-500/50 transition-all">
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-11 h-11 rounded-xl bg-sky-600/20 border border-sky-500/40 flex items-center justify-center text-sky-400 shrink-0">
+                                    <Database class="w-6 h-6" />
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-white text-base tracking-wide">BENJAMÍN YUCRA</h3>
+                                    <p class="text-xs font-semibold text-sky-400 uppercase tracking-wider">SCRUM MASTER + BACKEND</p>
+                                </div>
+                            </div>
+                            <div class="h-px bg-slate-800 w-full"></div>
+                            <ul class="space-y-2.5 text-xs text-slate-300">
+                                <li class="flex items-start gap-2">
+                                    <ArrowRight class="w-3.5 h-3.5 text-sky-400 shrink-0 mt-0.5" />
+                                    <span>Coordinación y facilitación de Scrum.</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <ArrowRight class="w-3.5 h-3.5 text-sky-400 shrink-0 mt-0.5" />
+                                    <span>Desarrollo con Laravel 12 y PHP 8.2.</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <ArrowRight class="w-3.5 h-3.5 text-sky-400 shrink-0 mt-0.5" />
+                                    <span>Reglas de negocio y arquitectura multi-tenant.</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <ArrowRight class="w-3.5 h-3.5 text-sky-400 shrink-0 mt-0.5" />
+                                    <span>Seguridad y transacciones financieras.</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-sky-300">
+                            <span class="font-semibold">Historias Asignadas:</span>
+                            <span class="px-2 py-0.5 rounded bg-sky-500/10 border border-sky-500/30 font-bold">HU-005, HU-006, HU-008</span>
+                        </div>
+                    </div>
+
+                    <!-- JUAN E. CORDERO -->
+                    <div class="rounded-2xl bg-[#0f172a] border border-indigo-900/60 p-6 flex flex-col justify-between shadow-xl relative overflow-hidden group hover:border-indigo-500/50 transition-all">
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-11 h-11 rounded-xl bg-indigo-600/20 border border-indigo-500/40 flex items-center justify-center text-indigo-400 shrink-0">
+                                    <Laptop class="w-6 h-6" />
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-white text-base tracking-wide">JUAN E. CORDERO</h3>
+                                    <p class="text-xs font-semibold text-sky-400 uppercase tracking-wider">DEVELOPER — FRONTEND</p>
+                                </div>
+                            </div>
+                            <div class="h-px bg-slate-800 w-full"></div>
+                            <ul class="space-y-2.5 text-xs text-slate-300">
+                                <li class="flex items-start gap-2">
+                                    <ArrowRight class="w-3.5 h-3.5 text-sky-400 shrink-0 mt-0.5" />
+                                    <span>Desarrollo con Vue 3 y TypeScript.</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <ArrowRight class="w-3.5 h-3.5 text-sky-400 shrink-0 mt-0.5" />
+                                    <span>Integración mediante Inertia.js v2.</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <ArrowRight class="w-3.5 h-3.5 text-sky-400 shrink-0 mt-0.5" />
+                                    <span>Interfaces con Tailwind CSS y Shadcn Vue.</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <ArrowRight class="w-3.5 h-3.5 text-sky-400 shrink-0 mt-0.5" />
+                                    <span>Componentes interactivos e integración con backend.</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-indigo-300">
+                            <span class="font-semibold">Historias Asignadas:</span>
+                            <span class="px-2 py-0.5 rounded bg-indigo-500/10 border border-indigo-500/30 font-bold">HU-003, HU-004, HU-007</span>
+                        </div>
                     </div>
                 </div>
             </div>
