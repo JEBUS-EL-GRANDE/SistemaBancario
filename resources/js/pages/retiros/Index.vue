@@ -88,7 +88,7 @@ watch([search, canal], filtrar);
                 </div>
                 <Link
                     href="/retiros/create"
-                    class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-amber-500/20 hover:from-amber-500 hover:to-orange-500 transition-all cursor-pointer"
+                    class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-600 to-amber-400 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-amber-500/20 hover:from-amber-500 hover:to-amber-300 transition-all cursor-pointer"
                 >
                     <Plus class="h-4 w-4" />
                     Procesar Retiro

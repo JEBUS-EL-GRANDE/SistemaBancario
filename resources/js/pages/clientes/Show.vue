@@ -173,7 +173,7 @@ const money = (n: number) => `Bs. ${Number(n || 0).toLocaleString('es-BO', { min
                     </Link>
                     <Link
                         :href="`/prestamos/create?cliente_id=${cliente.id}`"
-                        class="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 px-3.5 py-2 text-xs font-semibold text-white shadow-md shadow-amber-500/20 hover:from-amber-500 hover:to-orange-500 transition-all cursor-pointer"
+                        class="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-600 to-amber-400 px-3.5 py-2 text-xs font-semibold text-white shadow-md shadow-amber-500/20 hover:from-amber-500 hover:to-amber-300 transition-all cursor-pointer"
                     >
                         <CreditCard class="h-4 w-4" />
                         Solicitar Préstamo

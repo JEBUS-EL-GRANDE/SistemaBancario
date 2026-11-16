@@ -1,8 +1,8 @@
-<h1 id="descripcionA"> Sistema Bancario - Plataforma de Gestion Financiera </h1>
+<h1 id="descripcionA" style="color: blue; font-size: 40px"> Sistema Bancario - Plataforma de Gestion Financiera </h1>
 Sistema web para la gestion Bancaria, desarrollado como proyecto de la materia **Ingenieria de software 1(INF-422)** . La aplicacion permite administrar clientes, cuentas bancarias (corrientes, ahorro, plazo fijo), prestamos con calculo de cuotas de amortizacion, depositos, retiros, transferencias entre cuentas y un modulo de biometria/bitacora para control de accesos y auditoria.
 
 ### Proyecto compilado
-![video de proyecto ya compilado](public/gimnasio.gif "video de mi proyecto ya compilado")
+![video de proyecto ya compilado](public/banco.gif "video de mi proyecto ya compilado")
 
 <h2 id="integrantesA">Integrantes del proyecto:</h2>
 
@@ -70,12 +70,10 @@ El sistema cuenta con **4 roles** (administrador,cajero,ejecutivo_credito,client
 
 #### 1. administrador
 Usuario encargado de administrar y controlar el funcionamiento general del sistema bancario.
-- Gestion completa de clientes y usuarios.
+- Gestion completa de clientes y usuarios(empleados).
 - Administracion de tipos de cuentas y servicios bancarios.
-- Gestion de promociones, tasas y beneficios
-- Administracion de turnos y asignacion de cajas.
 - Consulta y generacion de reportes financieros globales.
-- Gestion de copias de seguridad y restauracion de la base de datos.
+- Registro de depositos, retiros y transferencias.
 - Control de operaciones administrativas y auditoria.
 
 #### 2. cajero
@@ -86,17 +84,23 @@ Usuario encargado de realizar las operaciones cotidianas de atencion al cliente 
 - Apertura de cuentas bancarias.
 - Registro de depositos, retiros y transferencias.
 - Consulta de informacion de saldos y movimientos.
-- Generacion de reportes operativos segon los permisos asignados
+
 
 #### 3. ejecutivo_credito
+- Gestion completa de clientes y usuarios.
+- Registro de cuentas, transferencias.
+- Apertura de cuentas bancarias.
+- Consulta de informacion de saldos y movimientos.
 
 #### 4. cliente 
---------------------------------------------------------------------------------
-## Modelo de Base de Datos relacional (9 tablas)
+- Registro de cuentas, transferencias.
+- Consulta de informacion de saldos y movimientos.
 
-### Tablas principales
-- **persona (informacion general)**.
-- **usuario (roles)**.
+--------------------------------------------------------------------------------
+## Modelo de Base de Datos relacional (14 tablas)
+
+### Tablas principales de roles es la:
+- **users (roles)**.
 
 
 <h2 id="basededatosA">tabla de base de datos relacional: </h2> 
@@ -108,7 +112,7 @@ Usuario encargado de realizar las operaciones cotidianas de atencion al cliente 
 recuerda actualizar sus paquetes ante, para evitar errores al momento de la instalacion.
 
 ```bash
-#dentro del proyecto (cd BecaComedor)
+#dentro del proyecto (cd SistemaBancario)
 php --ini                                       #para buscar el php.ini descomenta la bd que usaras
 composer install                                #instalar composer
 #composer update --ignore-platform-reqs         #(si da error el composer install)
@@ -121,7 +125,7 @@ php artisan serve        #(terminal 1)          #Iniciar el servidor
 npm run dev              #(terminal 2)          #levanta Frontend Vue/Vite
 ```
 
-<h3  style="color: blue; font-size: 50px">Instalacion en Windows: <img src="public/windows.svg" width="20" height="20"></h3> 
+<h3>Instalacion en Windows(complementos): <img src="public/windows.svg" width="20" height="20"></h3> 
 
 ```bash
 # 1. Clonar el repositorio
@@ -129,7 +133,7 @@ git clone https://github.com/JEBUS-EL-GRANDE/SistemaBancario.git
 cd BecaComedor
 #busca y descarga php (.zip) de la web oficial y composer e instalalos
 ```
-<h3>instalacion en Arch linux: <img src="public/arch-linux.svg" width="20" height="20"></h3>
+<h3>instalacion en Arch linux(complementos): <img src="public/arch-linux.svg" width="20" height="20"></h3>
 
 ```bash
 sudo pacman -S php                              #instalar php
@@ -137,7 +141,7 @@ sudo pacman -S composer                         #instalar composer
 sudo pacman -S nodejs npm                       #instalar npm
 ```
 
-<h3> Instalacion en debian: <img src="public/debian.svg" width="20" height="20"></h3>
+<h3> Instalacion en debian(complementos): <img src="public/debian.svg" width="20" height="20"></h3>
 
 ```bash
 sudo apt install php php-cli php-mysql php-mbstring php-xml php-curl php-zip
@@ -148,11 +152,15 @@ sudo apt install nodejs npm -y                  #instala npm
 <h3 id="usuarioA"> crea usuario admin en tu BASE DE DATOS : <img src="public/mariadb.svg" width="20" height="20">  <img src="public/postgresql.svg" width="20" height="20">  <img src="public/mongodb.svg" width="20" height="20"></h3>
 con este primer usuario podras crear al resto de usuarios que tienen roles:
 
-<img src="public/BDimg.jpeg">
+<img src="public/tabla.jpeg">
 
 **Tabla users:**
 ```bash
-INSERT INTO usuarios (id,name,apellidos,username,rol,estado,email,password)VALUES (1,'juan','perez','Mrjuan','administrador','activo','admin@gmail.com',$2y$12$bXIEjgObeJirXky9sGaSreKr1nPs0sH3iqvdWVeztJRlutJ857qpa);
+INSERT INTO users (id,name,apellidos,username,rol,estado,email,password)VALUES (1,'juan','perez','Mrjuan','administrador','activo','admin@gmail.com','$2y$12$bXIEjgObeJirXky9sGaSreKr1nPs0sH3iqvdWVeztJRlutJ857qpa');
 ```
 con esto podras acceder al proyecto, solo pon en el login **admin@gmail.com**   y la contraseña es **"12345678"** que viene siendo la contraseña encriptada que pusiste de la tabla **users**
 
+Si por alguna razon da error la contraseña encriptada, puedes cambiarla por otra con el comando 
+>php artisan tinker
+
+>App\Models\User::where('email', 'admin@gmail.com')->update(['password' => Hash::make('12345678')]);

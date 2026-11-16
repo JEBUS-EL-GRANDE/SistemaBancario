@@ -9,6 +9,8 @@ html {
 
 @layer base {
     :root {
+        --accent-rgb: 245 166 35;
+        --accent-color: #f5a623;
         --background: 0 0% 100%;
         --foreground: 0 0% 3.9%;
         --card: 0 0% 100%;

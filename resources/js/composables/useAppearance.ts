@@ -17,15 +17,19 @@ const ACCENT_VARS: Record<AccentColor, string> = {
     emerald: '#00e676',
 };
 
+const ACCENT_RGB: Record<AccentColor, string> = {
+    pink:    '224 64 251',
+    orange:  '245 166 35',
+    teal:    '0 188 212',
+    purple:  '124 77 255',
+    red:     '255 82 82',
+    emerald: '0 230 118',
+};
+
 function applyAccent(color: AccentColor) {
-    const v = ACCENT_VARS[color];
-    document.documentElement.style.setProperty('--accent-bg', v);
-    // expose a plain rgb for text uses (strip gradient if needed)
-    const plainMap: Record<AccentColor, string> = {
-        pink: '#e040fb', orange: '#f5a623', teal: '#00bcd4',
-        purple: '#7c4dff', red: '#ff5252', emerald: '#00e676',
-    };
-    document.documentElement.style.setProperty('--accent-color', plainMap[color]);
+    document.documentElement.style.setProperty('--accent-bg', ACCENT_VARS[color]);
+    document.documentElement.style.setProperty('--accent-color', `#${ACCENT_RGB[color].split(' ').map((n) => Number(n).toString(16).padStart(2, '0')).join('')}`);
+    document.documentElement.style.setProperty('--accent-rgb', ACCENT_RGB[color]);
 }
 
 // ─── Background themes ──────────────────────────────────────────────────────────
@@ -36,8 +40,38 @@ const BG_VARS: Record<BgTheme, string> = {
     darker:  '#0d0d14',
 };
 
+function hexToHsl(hex: string) {
+    const r = parseInt(hex.slice(1, 3), 16) / 255;
+    const g = parseInt(hex.slice(3, 5), 16) / 255;
+    const b = parseInt(hex.slice(5, 7), 16) / 255;
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const l = (max + min) / 2;
+    let h = 0;
+    let s = 0;
+    if (max !== min) {
+        const d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        if (max === r) h = (g - b) / d + (g < b ? 6 : 0);
+        else if (max === g) h = (b - r) / d + 2;
+        else h = (r - g) / d + 4;
+        h /= 6;
+    }
+    return `${Math.round(h * 360)} ${Math.round(s * 100)}% ${Math.round(l * 100)}%`;
+}
+
 function applyBg(theme: BgTheme) {
-    document.documentElement.style.setProperty('--bg-base', BG_VARS[theme]);
+    const hsl = hexToHsl(BG_VARS[theme]);
+    const root = document.documentElement.style;
+    root.setProperty('--bg-base', BG_VARS[theme]);
+    root.setProperty('--background', hsl);
+    root.setProperty('--card', hsl);
+    root.setProperty('--popover', hsl);
+    root.setProperty('--sidebar-background', hsl);
+    root.setProperty('--foreground', '0 0% 98%');
+    root.setProperty('--card-foreground', '0 0% 98%');
+    root.setProperty('--popover-foreground', '0 0% 98%');
+    root.setProperty('--sidebar-foreground', '0 0% 96%');
 }
 
 // ─── Fonts ─────────────────────────────────────────────────────────────────────
@@ -52,6 +86,11 @@ function applyFont(font: FontFamily) {
     document.body.style.fontFamily = FONT_STACK[font];
 }
 
+// ─── Card style ────────────────────────────────────────────────────────────────
+function applyCardStyle(style: CardStyle) {
+    document.documentElement.dataset.cardStyle = style;
+}
+
 // ─── Density ───────────────────────────────────────────────────────────────────
 function applyDensity(density: Density) {
     document.documentElement.dataset.density = density;
@@ -59,13 +98,15 @@ function applyDensity(density: Density) {
 
 // ─── Global init ───────────────────────────────────────────────────────────────
 export function initializeCustomAppearance() {
-    const accent  = (localStorage.getItem('accent-color')  as AccentColor)  || 'orange';
-    const bg      = (localStorage.getItem('bg-theme')      as BgTheme)      || 'black';
-    const font    = (localStorage.getItem('font-family')   as FontFamily)   || 'jakarta';
-    const density = (localStorage.getItem('density')       as Density)      || 'balanced';
+    const accent    = (localStorage.getItem('accent-color') as AccentColor) || 'orange';
+    const bg        = (localStorage.getItem('bg-theme')     as BgTheme)     || 'black';
+    const font      = (localStorage.getItem('font-family')  as FontFamily)  || 'jakarta';
+    const cardStyle = (localStorage.getItem('card-style')   as CardStyle)   || 'below';
+    const density   = (localStorage.getItem('density')      as Density)     || 'balanced';
     applyAccent(accent);
     applyBg(bg);
     applyFont(font);
+    applyCardStyle(cardStyle);
     applyDensity(density);
 }
 
