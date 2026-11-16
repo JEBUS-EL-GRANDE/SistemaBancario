@@ -154,14 +154,17 @@ const footerNavItems = [
                 <SidebarMenuItem>
                     <SidebarMenuButton size="lg" as-child>
                         <Link href="/dashboard" class="flex items-center gap-3">
-                            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-amber-500 to-amber-300 text-slate-950 font-bold shadow-md shadow-amber-500/20">
+                            <div
+                                class="flex h-10 w-10 items-center justify-center rounded-xl text-white font-bold transition-all shrink-0"
+                                style="background: var(--accent-bg); box-shadow: 0 4px 14px rgba(var(--accent-rgb), 0.35);"
+                            >
                                 {{ (page.props.auth as any)?.user?.banco?.codigo?.substring(0, 2) ?? 'SB' }}
                             </div>
                             <div class="flex flex-col text-left">
-                                <span class="font-bold text-sm leading-tight text-white tracking-wide">
+                                <span class="font-bold text-sm leading-tight text-foreground tracking-wide">
                                     {{ (page.props.auth as any)?.user?.banco?.nombre ?? 'Sistema Bancario' }}
                                 </span>
-                                <span class="text-[11px] text-amber-400 font-medium">
+                                <span class="text-[11px] font-medium" style="color: var(--accent-color);">
                                     {{ (page.props.auth as any)?.user?.banco?.sigla ?? 'Plataforma Multi-Banco' }}
                                 </span>
                             </div>

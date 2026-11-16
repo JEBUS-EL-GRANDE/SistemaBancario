@@ -1,126 +1,241 @@
 import { onMounted, ref } from 'vue';
 
-type Appearance = 'light' | 'dark' | 'system';
+export type Appearance = 'light' | 'dark' | 'system';
 export type AccentColor = 'pink' | 'orange' | 'teal' | 'purple' | 'red' | 'emerald';
 export type BgTheme = 'black' | 'darkgray' | 'slate' | 'darker';
 export type FontFamily = 'jakarta' | 'manrope' | 'outfit';
 export type CardStyle = 'below' | 'overlay';
 export type Density = 'compact' | 'balanced' | 'spacious';
 
-// ─── Accent colors ─────────────────────────────────────────────────────────────
-const ACCENT_VARS: Record<AccentColor, string> = {
-    pink:    'linear-gradient(135deg,#e040fb,#f06292)',
-    orange:  '#f5a623',
-    teal:    '#00bcd4',
-    purple:  '#7c4dff',
-    red:     '#ff5252',
-    emerald: '#00e676',
+// ─── Accent Colors ─────────────────────────────────────────────────────────────
+export const ACCENT_CONFIG: Record<
+    AccentColor,
+    { primary: string; gradient: string; rgb: string; label: string }
+> = {
+    pink: {
+        primary: '#e040fb',
+        gradient: 'linear-gradient(135deg, #e040fb, #f06292)',
+        rgb: '224 64 251',
+        label: 'Rosa',
+    },
+    orange: {
+        primary: '#f5a623',
+        gradient: 'linear-gradient(135deg, #f5a623, #ff7043)',
+        rgb: '245 166 35',
+        label: 'Naranja',
+    },
+    teal: {
+        primary: '#00bcd4',
+        gradient: 'linear-gradient(135deg, #00bcd4, #26c6da)',
+        rgb: '0 188 212',
+        label: 'Turquesa',
+    },
+    purple: {
+        primary: '#7c4dff',
+        gradient: 'linear-gradient(135deg, #7c4dff, #651fff)',
+        rgb: '124 77 255',
+        label: 'Violeta',
+    },
+    red: {
+        primary: '#ff5252',
+        gradient: 'linear-gradient(135deg, #ff5252, #ff1744)',
+        rgb: '255 82 82',
+        label: 'Rojo',
+    },
+    emerald: {
+        primary: '#00e676',
+        gradient: 'linear-gradient(135deg, #00e676, #00c853)',
+        rgb: '0 230 118',
+        label: 'Esmeralda',
+    },
 };
 
-const ACCENT_RGB: Record<AccentColor, string> = {
-    pink:    '224 64 251',
-    orange:  '245 166 35',
-    teal:    '0 188 212',
-    purple:  '124 77 255',
-    red:     '255 82 82',
-    emerald: '0 230 118',
-};
-
-function applyAccent(color: AccentColor) {
-    document.documentElement.style.setProperty('--accent-bg', ACCENT_VARS[color]);
-    document.documentElement.style.setProperty('--accent-color', `#${ACCENT_RGB[color].split(' ').map((n) => Number(n).toString(16).padStart(2, '0')).join('')}`);
-    document.documentElement.style.setProperty('--accent-rgb', ACCENT_RGB[color]);
-}
-
-// ─── Background themes ──────────────────────────────────────────────────────────
-const BG_VARS: Record<BgTheme, string> = {
-    black:   '#000000',
-    darkgray:'#111111',
-    slate:   '#1a1a2e',
-    darker:  '#0d0d14',
-};
-
-function hexToHsl(hex: string) {
-    const r = parseInt(hex.slice(1, 3), 16) / 255;
-    const g = parseInt(hex.slice(3, 5), 16) / 255;
-    const b = parseInt(hex.slice(5, 7), 16) / 255;
-    const max = Math.max(r, g, b);
-    const min = Math.min(r, g, b);
-    const l = (max + min) / 2;
-    let h = 0;
-    let s = 0;
-    if (max !== min) {
-        const d = max - min;
-        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-        if (max === r) h = (g - b) / d + (g < b ? 6 : 0);
-        else if (max === g) h = (b - r) / d + 2;
-        else h = (r - g) / d + 4;
-        h /= 6;
-    }
-    return `${Math.round(h * 360)} ${Math.round(s * 100)}% ${Math.round(l * 100)}%`;
-}
-
-function applyBg(theme: BgTheme) {
-    const hsl = hexToHsl(BG_VARS[theme]);
+export function applyAccent(color: AccentColor) {
+    const cfg = ACCENT_CONFIG[color] || ACCENT_CONFIG.orange;
     const root = document.documentElement.style;
-    root.setProperty('--bg-base', BG_VARS[theme]);
-    root.setProperty('--background', hsl);
-    root.setProperty('--card', hsl);
-    root.setProperty('--popover', hsl);
-    root.setProperty('--sidebar-background', hsl);
-    root.setProperty('--foreground', '0 0% 98%');
-    root.setProperty('--card-foreground', '0 0% 98%');
-    root.setProperty('--popover-foreground', '0 0% 98%');
-    root.setProperty('--sidebar-foreground', '0 0% 96%');
+    root.setProperty('--accent-color', cfg.primary);
+    root.setProperty('--accent-bg', cfg.gradient);
+    root.setProperty('--accent-rgb', cfg.rgb);
+    root.setProperty('--ring', cfg.primary);
+    root.setProperty('--sidebar-ring', cfg.primary);
+}
+
+// ─── Background & Theme Configurations ─────────────────────────────────────────
+export const DARK_BG_CONFIG: Record<
+    BgTheme,
+    {
+        bg: string;
+        bgHsl: string;
+        sidebarHsl: string;
+        cardHsl: string;
+        borderHsl: string;
+        label: string;
+    }
+> = {
+    black: {
+        bg: '#000000',
+        bgHsl: '0 0% 0%',
+        sidebarHsl: '0 0% 5%',
+        cardHsl: '0 0% 7%',
+        borderHsl: '0 0% 16%',
+        label: 'Negro puro',
+    },
+    darkgray: {
+        bg: '#111114',
+        bgHsl: '240 5% 7%',
+        sidebarHsl: '240 6% 4%',
+        cardHsl: '240 5% 12%',
+        borderHsl: '240 5% 18%',
+        label: 'Gris oscuro',
+    },
+    slate: {
+        bg: '#0f172a',
+        bgHsl: '222 47% 11%',
+        sidebarHsl: '224 71% 5%',
+        cardHsl: '217 33% 16%',
+        borderHsl: '217 33% 22%',
+        label: 'Pizarra',
+    },
+    darker: {
+        bg: '#0d0d14',
+        bgHsl: '240 21% 6%',
+        sidebarHsl: '240 33% 3%',
+        cardHsl: '240 18% 11%',
+        borderHsl: '240 14% 17%',
+        label: 'Oscuro plus',
+    },
+};
+
+export const LIGHT_CONFIG = {
+    bgHsl: '210 20% 98%',          // slate-50 #f8fafc
+    sidebarHsl: '0 0% 100%',       // pure white #ffffff
+    cardHsl: '0 0% 100%',          // pure white
+    borderHsl: '214 32% 91%',      // slate-200 #e2e8f0
+    foregroundHsl: '222 47% 11%',  // slate-900 #0f172a
+    cardForegroundHsl: '222 47% 11%',
+    mutedForegroundHsl: '215 16% 47%',
+};
+
+export function applyThemeAndBg(appearanceMode?: Appearance, bgVariant?: BgTheme) {
+    const currentAppearance =
+        appearanceMode ?? ((localStorage.getItem('appearance') as Appearance) || 'system');
+    const currentBg =
+        bgVariant ?? ((localStorage.getItem('bg-theme') as BgTheme) || 'darker');
+
+    const isDark =
+        currentAppearance === 'system'
+            ? window.matchMedia('(prefers-color-scheme: dark)').matches
+            : currentAppearance === 'dark';
+
+    document.documentElement.classList.toggle('dark', isDark);
+
+    const root = document.documentElement.style;
+
+    if (isDark) {
+        const cfg = DARK_BG_CONFIG[currentBg] || DARK_BG_CONFIG.darker;
+        root.setProperty('--bg-base', cfg.bg);
+        root.setProperty('--background', cfg.bgHsl);
+        root.setProperty('--sidebar-background', cfg.sidebarHsl);
+        root.setProperty('--card', cfg.cardHsl);
+        root.setProperty('--popover', cfg.cardHsl);
+        root.setProperty('--border', cfg.borderHsl);
+        root.setProperty('--sidebar-border', cfg.borderHsl);
+        root.setProperty('--foreground', '0 0% 98%');
+        root.setProperty('--card-foreground', '0 0% 98%');
+        root.setProperty('--popover-foreground', '0 0% 98%');
+        root.setProperty('--sidebar-foreground', '0 0% 96%');
+        root.setProperty('--muted-foreground', '215 20% 65%');
+        root.setProperty('--sidebar-accent', cfg.cardHsl);
+        root.setProperty('--sidebar-accent-foreground', '0 0% 98%');
+    } else {
+        root.setProperty('--bg-base', '#f8fafc');
+        root.setProperty('--background', LIGHT_CONFIG.bgHsl);
+        root.setProperty('--sidebar-background', LIGHT_CONFIG.sidebarHsl);
+        root.setProperty('--card', LIGHT_CONFIG.cardHsl);
+        root.setProperty('--popover', LIGHT_CONFIG.cardHsl);
+        root.setProperty('--border', LIGHT_CONFIG.borderHsl);
+        root.setProperty('--sidebar-border', LIGHT_CONFIG.borderHsl);
+        root.setProperty('--foreground', LIGHT_CONFIG.foregroundHsl);
+        root.setProperty('--card-foreground', LIGHT_CONFIG.cardForegroundHsl);
+        root.setProperty('--popover-foreground', LIGHT_CONFIG.cardForegroundHsl);
+        root.setProperty('--sidebar-foreground', LIGHT_CONFIG.foregroundHsl);
+        root.setProperty('--muted-foreground', LIGHT_CONFIG.mutedForegroundHsl);
+        root.setProperty('--sidebar-accent', '210 20% 94%');
+        root.setProperty('--sidebar-accent-foreground', LIGHT_CONFIG.foregroundHsl);
+    }
 }
 
 // ─── Fonts ─────────────────────────────────────────────────────────────────────
-const FONT_STACK: Record<FontFamily, string> = {
+export const FONT_STACK: Record<FontFamily, string> = {
     jakarta: '"Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif',
     manrope: '"Manrope", ui-sans-serif, system-ui, sans-serif',
     outfit:  '"Outfit", ui-sans-serif, system-ui, sans-serif',
 };
 
-function applyFont(font: FontFamily) {
-    document.documentElement.style.setProperty('--font-family', FONT_STACK[font]);
-    document.body.style.fontFamily = FONT_STACK[font];
+export function applyFont(font: FontFamily) {
+    const stack = FONT_STACK[font] || FONT_STACK.jakarta;
+    document.documentElement.style.setProperty('--font-sans', stack);
+    document.documentElement.style.setProperty('--font-family', stack);
+    document.body.style.fontFamily = stack;
 }
 
-// ─── Card style ────────────────────────────────────────────────────────────────
-function applyCardStyle(style: CardStyle) {
+// ─── Card Style ────────────────────────────────────────────────────────────────
+export function applyCardStyle(style: CardStyle) {
     document.documentElement.dataset.cardStyle = style;
 }
 
 // ─── Density ───────────────────────────────────────────────────────────────────
-function applyDensity(density: Density) {
+export function applyDensity(density: Density) {
     document.documentElement.dataset.density = density;
 }
 
-// ─── Global init ───────────────────────────────────────────────────────────────
+// ─── Global Initializers ───────────────────────────────────────────────────────
+const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+const handleSystemThemeChange = () => {
+    const currentAppearance = localStorage.getItem('appearance') as Appearance | null;
+    if (currentAppearance === 'system' || !currentAppearance) {
+        applyThemeAndBg('system');
+    }
+};
+
+export function initializeTheme() {
+    const savedAppearance = (localStorage.getItem('appearance') as Appearance | null) || 'system';
+    const savedBg = (localStorage.getItem('bg-theme') as BgTheme | null) || 'darker';
+    applyThemeAndBg(savedAppearance, savedBg);
+    mediaQuery.removeEventListener('change', handleSystemThemeChange);
+    mediaQuery.addEventListener('change', handleSystemThemeChange);
+}
+
+export function updateTheme(value: Appearance) {
+    applyThemeAndBg(value);
+}
+
 export function initializeCustomAppearance() {
     const accent    = (localStorage.getItem('accent-color') as AccentColor) || 'orange';
-    const bg        = (localStorage.getItem('bg-theme')     as BgTheme)     || 'black';
+    const bg        = (localStorage.getItem('bg-theme')     as BgTheme)     || 'darker';
     const font      = (localStorage.getItem('font-family')  as FontFamily)  || 'jakarta';
     const cardStyle = (localStorage.getItem('card-style')   as CardStyle)   || 'below';
     const density   = (localStorage.getItem('density')      as Density)     || 'balanced';
+    const theme     = (localStorage.getItem('appearance')   as Appearance)  || 'system';
+
     applyAccent(accent);
-    applyBg(bg);
+    applyThemeAndBg(theme, bg);
     applyFont(font);
     applyCardStyle(cardStyle);
     applyDensity(density);
 }
 
-// ─── Composable ────────────────────────────────────────────────────────────────
+// ─── Composables ───────────────────────────────────────────────────────────────
 export function useCustomAppearance() {
     const accentColor = ref<AccentColor>('orange');
-    const bgTheme     = ref<BgTheme>('black');
+    const bgTheme     = ref<BgTheme>('darker');
     const fontFamily  = ref<FontFamily>('jakarta');
     const cardStyle   = ref<CardStyle>('below');
     const density     = ref<Density>('balanced');
 
     onMounted(() => {
         accentColor.value = (localStorage.getItem('accent-color') as AccentColor)  || 'orange';
-        bgTheme.value     = (localStorage.getItem('bg-theme')     as BgTheme)      || 'black';
+        bgTheme.value     = (localStorage.getItem('bg-theme')     as BgTheme)      || 'darker';
         fontFamily.value  = (localStorage.getItem('font-family')  as FontFamily)   || 'jakarta';
         cardStyle.value   = (localStorage.getItem('card-style')   as CardStyle)    || 'below';
         density.value     = (localStorage.getItem('density')      as Density)      || 'balanced';
@@ -131,57 +246,49 @@ export function useCustomAppearance() {
         localStorage.setItem('accent-color', c);
         applyAccent(c);
     }
+
     function setBg(t: BgTheme) {
         bgTheme.value = t;
         localStorage.setItem('bg-theme', t);
-        applyBg(t);
+        applyThemeAndBg(undefined, t);
     }
+
     function setFont(f: FontFamily) {
         fontFamily.value = f;
         localStorage.setItem('font-family', f);
         applyFont(f);
     }
+
     function setCardStyle(s: CardStyle) {
         cardStyle.value = s;
         localStorage.setItem('card-style', s);
+        applyCardStyle(s);
     }
+
     function setDensity(d: Density) {
         density.value = d;
         localStorage.setItem('density', d);
         applyDensity(d);
     }
 
-    return { accentColor, bgTheme, fontFamily, cardStyle, density, setAccent, setBg, setFont, setCardStyle, setDensity };
-}
-
-// ─── Original theme (light / dark / system) ─────────────────────────────────
-export function updateTheme(value: Appearance) {
-    if (value === 'system') {
-        const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        document.documentElement.classList.toggle('dark', systemTheme === 'dark');
-    } else {
-        document.documentElement.classList.toggle('dark', value === 'dark');
-    }
-}
-
-const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-
-const handleSystemThemeChange = () => {
-    const currentAppearance = localStorage.getItem('appearance') as Appearance | null;
-    updateTheme(currentAppearance || 'system');
-};
-
-export function initializeTheme() {
-    const savedAppearance = localStorage.getItem('appearance') as Appearance | null;
-    updateTheme(savedAppearance || 'system');
-    mediaQuery.addEventListener('change', handleSystemThemeChange);
+    return {
+        accentColor,
+        bgTheme,
+        fontFamily,
+        cardStyle,
+        density,
+        setAccent,
+        setBg,
+        setFont,
+        setCardStyle,
+        setDensity,
+    };
 }
 
 export function useAppearance() {
     const appearance = ref<Appearance>('system');
 
     onMounted(() => {
-        initializeTheme();
         const savedAppearance = localStorage.getItem('appearance') as Appearance | null;
         if (savedAppearance) {
             appearance.value = savedAppearance;
@@ -191,7 +298,7 @@ export function useAppearance() {
     function updateAppearance(value: Appearance) {
         appearance.value = value;
         localStorage.setItem('appearance', value);
-        updateTheme(value);
+        applyThemeAndBg(value);
     }
 
     return { appearance, updateAppearance };
