@@ -136,7 +136,7 @@ const cambiarEstado = () => {
                         </Link>
                         <Link
                             :href="`/retiros/create?cuenta=${cuenta.numero_cuenta}`"
-                            class="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-amber-500/20 hover:from-amber-500 hover:to-orange-500 transition-all cursor-pointer"
+                            class="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-600 to-amber-400 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-amber-500/20 hover:from-amber-500 hover:to-amber-300 transition-all cursor-pointer"
                         >
                             <ArrowUpRight class="h-4 w-4" />
                             Procesar Retiro

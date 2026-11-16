@@ -12,7 +12,7 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Instrument Sans', ...defaultTheme.fontFamily.sans],
+                sans: ['var(--font-sans)', 'Plus Jakarta Sans', 'Instrument Sans', ...defaultTheme.fontFamily.sans],
             },
             borderRadius: {
                 lg: 'var(--radius)',
@@ -20,6 +20,19 @@ export default {
                 sm: 'calc(var(--radius) - 4px)',
             },
             colors: {
+                amber: {
+                    50: 'rgb(var(--accent-rgb) / <alpha-value>)',
+                    100: 'rgb(var(--accent-rgb) / <alpha-value>)',
+                    200: 'rgb(var(--accent-rgb) / <alpha-value>)',
+                    300: 'rgb(var(--accent-rgb) / <alpha-value>)',
+                    400: 'rgb(var(--accent-rgb) / <alpha-value>)',
+                    500: 'rgb(var(--accent-rgb) / <alpha-value>)',
+                    600: 'rgb(var(--accent-rgb) / <alpha-value>)',
+                    700: 'rgb(var(--accent-rgb) / <alpha-value>)',
+                    800: 'rgb(var(--accent-rgb) / <alpha-value>)',
+                    900: 'rgb(var(--accent-rgb) / <alpha-value>)',
+                    950: 'rgb(var(--accent-rgb) / <alpha-value>)',
+                },
                 background: 'hsl(var(--background))',
                 foreground: 'hsl(var(--foreground))',
                 card: {

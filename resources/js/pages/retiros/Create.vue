@@ -402,7 +402,7 @@ const submit = () => {
                         <button
                             type="submit"
                             :disabled="form.processing || !form.numero_cuenta || !form.monto || esMontoInvalido || (form.metodo_autenticacion === 'biometria' && !huellaVerificada)"
-                            class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-amber-500/20 hover:from-amber-500 hover:to-orange-500 focus:outline-none disabled:opacity-50 transition-all cursor-pointer"
+                            class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-600 to-amber-400 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-amber-500/20 hover:from-amber-500 hover:to-amber-300 focus:outline-none disabled:opacity-50 transition-all cursor-pointer"
                         >
                             <Check class="h-4 w-4" />
                             {{ form.processing ? 'Validando...' : 'Confirmar Retiro' }}
